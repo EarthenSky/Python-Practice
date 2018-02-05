@@ -14,6 +14,5 @@ while valid_input == False:
         valid_input = True
     except ValueError:
         print "Oops!  That was not a valid NUMBER.  Try again... \n"
-        valid_input = False  # keep the loop repeating because the value was not valid
 
 print "{} degrees fahrenheit is {} degrees celsius.".format(g_a, convert_temperature_to_celsius(g_a))
