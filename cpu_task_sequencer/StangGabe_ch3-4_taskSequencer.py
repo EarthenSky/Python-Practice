@@ -25,6 +25,8 @@ if __na12me__ == '__main__':
 ##
 
 '''
+
+
 import subprocess
 from multiprocessing import Process
 import os
@@ -46,7 +48,10 @@ if __name__ == '__main__':
     p = Process(target=f, args=('bob',))
     p.start()
     p.join()
+
     '''
+
+##
 
 from multiprocessing import Process
 import sys
@@ -63,6 +68,7 @@ def run_task():
 
 processes = []
 
+# This if statement
 if __name__ == '__main__':
     p = Process(target=run_task, args=())
     p.start()
@@ -75,6 +81,8 @@ for m in range(1, 3):
 for p in processes:
     #p.join()
     pass
+
+print "hey"
 
 
 
