@@ -32,5 +32,5 @@ if __name__ == '__main__':
 
     print ("end")
 
-#async allowed
+#async allowed -- yes
 #
