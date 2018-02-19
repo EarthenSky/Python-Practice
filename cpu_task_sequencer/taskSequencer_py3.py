@@ -19,18 +19,10 @@ if __name__ == '__main__':
     for m in range(4):
         # This if statement
         p = Process(target=run_task, args=())
-        print ("befstart")
         p.start()
-        print ("afterstart")
         processes.append(p)
 
     print ("waiting")
 
     for p in processes:
         p.join()
-        print("join")
-
-    print ("end")
-
-#async allowed -- yes
-#
