@@ -1,6 +1,6 @@
 
-#variable
-temp = 0    #user input for conversion
+#variables
+temp = 0 #user input for conversion
 temp_converted = 0  #converted temperature
 
 while True:
@@ -8,10 +8,10 @@ while True:
     while True:
          try:
              #choice of conversion input
-             temp_type = int(raw_input("type 1 for Celcius to F \ntype 2 for F to Celcius \ninput: "))
-             #makes sure 1 / 2
+             temp_type = int(raw_input("type 1 for C to F \ntype 2 for F to C \nInput Value: "))
+             #makes sure 1 or 2
              if temp_type == 1 or temp_type == 2:
-                 break  #stop running code after
+                 break  #stop running code here
              else:
                  print "Oops! that was not 1 or 2"
          except ValueError:
@@ -23,7 +23,7 @@ while True:
          try:
              #check for C-F or F-C conversion
              if temp_type == 1:
-                 temp = float(raw_input("Enter temperature in Celcius: "))
+                 temp = float(raw_input("Enter temperature in C: "))
              elif temp_type == 2:
                  temp = float(raw_input("Enter temperature in F: "))
 

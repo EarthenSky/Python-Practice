@@ -17,6 +17,7 @@ def start_task_timer():
     timer = Timer(random.randint(1, 5), end_task)
     timer.start()
 
+# Call the timer start function
 start_task_timer()
 
 # This is the cpu hog loop.  It does overly complex math to hog cpu.
