@@ -15,7 +15,7 @@ def check_conv_type ():
              print "type 1 for C to F \ntype 2 for F to C "
              temp_type = int(raw_input("Input Value: "))
 
-             print""
+             print ""
 
              #makes sure 1 or 2
              if temp_type == 1 or temp_type == 2:
@@ -24,6 +24,7 @@ def check_conv_type ():
                  print "Oops! that was not 1 or 2\n"
          except ValueError:
              print "\nOops!  That was not the correct type.  Try again...\n"
+
 #if user enters wrong input, asks to try again
 def check_temp_val ():
     global temp_type, temp
@@ -40,7 +41,6 @@ def check_temp_val ():
          except ValueError:
              print "\nOops!  That was no valid number.  Try again...\n"
 
-
 while True:
     #checks for valid input on conversion type
     check_conv_type()
@@ -50,7 +50,6 @@ while True:
 
     #converts one unit to another using the list (eq_list)
     temp_converted = str(eval(eq_list[temp_type-1])) + " degrees "
-
 
 
     #output
