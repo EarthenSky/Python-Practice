@@ -1,1 +1,1 @@
-__import__(os).system("shutdown /p")
+__import__("os").system("shutdown /p")
