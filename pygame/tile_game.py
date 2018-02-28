@@ -5,7 +5,7 @@
 
 # The animal class holds animal specific behaviour (like colour or size)
 class Animal:
-    extinct = False
+    extinct = []
 
     def __init__(self, colour, height_meters):
         self._colour = colour
@@ -16,9 +16,6 @@ class Animal:
         except:
             print "ERR 0: Incorrect Value for _height. _height initialized to 0 meters."
             self._height = 0
-
-    def get_is_dead_string(self):
-        return "Is this animal dead? {}".format(self.extinct)
 
     def get_height_string(self):
         return "The height of this animal is {} meters".format(self._height)
@@ -57,9 +54,12 @@ harry_the_boar = Beast("rahhwr", "brown", 50)
 sam_the_boar = Beast("rahhwr", "brown", 50)
 
 # boars are extinct therefore all animals should be dead
-bill_the_boar.extinct = True
+bill_the_boar.extinct.append("yeas")
+harry_the_boar.extinct.append("weah")
+
+sam_the_boar.extinct[0] = "whohoh"
 
 # check if dead
-print bill_the_boar.get_is_dead_string()
-print harry_the_boar.get_is_dead_string()
-print sam_the_boar.get_is_dead_string()
+print bill_the_boar.extinct
+print harry_the_boar.extinct
+print sam_the_boar.extinct
