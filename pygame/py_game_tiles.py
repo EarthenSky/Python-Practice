@@ -9,13 +9,13 @@ def init():
 init()
 
 # Create a game window
-display_surface = pygame.display.set_mode( (300, 100) )
+display_surface = pygame.display.set_mode( (300, 300) )
 
 # Exit flag
 f_done = False
 while not f_done:
     # Draw things -w-
-    pygame.draw.rect(display_surface, (0, 255, 255), (100, 100, 10, 50))
+    pygame.draw.rect(display_surface, (0, 255, 255), (100, 100, 50, 50))
 
     # Query user input
     for event in pygame.event.get():
@@ -26,6 +26,3 @@ while not f_done:
             f_done = True;  # Set completed flag to true
 
     pygame.display.update()
-
-
-print "PAAAIIIINNNN!!!"
