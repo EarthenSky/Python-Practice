@@ -2,7 +2,7 @@ import pygame
 import game_manager
 pygame.init() #starts pygame
 
-#makes a screen of 300 by 300
+#makes a screen of 1280 by 720
 display_surface = pygame.display.set_mode( (1280, 720) )
 
 #title on top

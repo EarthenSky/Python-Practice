@@ -10,3 +10,7 @@ class tile:
     # outputs the rectangles
     def draw (self, display_surface):
         pygame.draw.rect(display_surface, self._colour, (self._position + self._size))
+
+    def is_clicked (self, mouse_x, mouse_y):
+        top = position[1]
+        bottom = position[1]+height[1]
