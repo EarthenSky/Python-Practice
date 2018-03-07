@@ -3,7 +3,7 @@ import pygame
 #different tile configurations
 WALL = 1
 GROUND = 2
-PLAYER = 3
+STARTPOINT = 3
 ENDPOINT = 4
 
 # single tile (blocks / background)
@@ -35,11 +35,11 @@ class tile:
             return False
 
     def set_tile_type(self, tile_type):
-        if tile_type == WALL: #black
-            self._colour = (0, 0, 0)
-        elif tile_type == GROUND: #white
+        if tile_type == WALL: #white
             self._colour = (255, 255, 255)
-        elif tile_type == PLAYER: #blue
+        elif tile_type == GROUND: #black
+            self._colour = (0, 0, 0)
+        elif tile_type == STARTPOINT: #blue
             self._colour = (0, 100, 255)
         elif tile_type == ENDPOINT: #green
             self._colour = (0, 255, 100)
