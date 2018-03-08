@@ -1,6 +1,7 @@
 import pygame
 import sys
 import game_manager
+import ctypes
 pygame.init() #starts pygame
 pygame.font.init()
 
@@ -8,21 +9,35 @@ pygame.font.init()
 display_surface = pygame.display.set_mode( (1280, 720) )
 
 #title on top
-pygame.display.set_caption("Box")
-myfont = pygame.font.SysFont('Comic Sans MS', 20)
+pygame.display.set_caption("Maze")
+myfont = pygame.font.SysFont('Comic Sans MS', 18)
+
 #checks to quit build mode
 is_build_mode_on = True
 
 #check to quit application
 stopped = False
 while not stopped:
-    #update and render function
-    game_manager.update()
+    #updates game logic
+    if is_build_mode_on == False:
+        game_manager.game_update()
+
+        #if mouse reaches endpoint, go back to buildmode
+        if game_manager.is_game_complete == True:
+            is_build_mode_on = True
+            #when cursor reaches enpoint, is_game_complete is equal True, resets
+            game_manager.is_game_complete = False
+            game_manager.is_first_game_loop = True #sets the cursor to startpoint
+            ctypes.windll.user32.MessageBoxW(0, u"You Win", u"Congratz", 0)
+
+    #this renders tile images
     game_manager.render(display_surface)
 
-    #text box with description
-    text_surface = myfont.render('Wall - white', True, (0, 0, 0))
-    display_surface.blit(text_surface,(0,0))
+    #text box describing tiles on display
+    text_surface_top = myfont.render("Wall - White | Ground - Black ", True, (0, 0, 0))
+    text_surface_bot = myfont.render("Startpoint - Blue | Endpoint - Green", True, (0, 0, 0))
+    display_surface.blit(text_surface_top,(0,0))
+    display_surface.blit(text_surface_bot,(0,22))
 
     #input handeler
     for event in pygame.event.get():
@@ -37,9 +52,15 @@ while not stopped:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:  #if space pressed
                     is_build_mode_on = game_manager.check_maze()  #quit build-mode if maze is correct
-
         elif is_build_mode_on == False:
-            pass
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:  #if space pressed
+                    is_build_mode_on = True
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                stopped = True
+
     pygame.display.update() #updates displays
 
 #closes application
