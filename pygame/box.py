@@ -27,7 +27,7 @@ while not stopped:
             is_build_mode_on = True
             #when cursor reaches enpoint, is_game_complete is equal True, resets
             game_manager.is_game_complete = False
-            game_manager.is_first_game_loop = True #sets the cursor to startpoint
+            game_manager.init_game = True #sets the cursor to startpoint
             ctypes.windll.user32.MessageBoxW(0, u"You Win", u"Congratz", 0)
 
     #this renders tile images
@@ -52,11 +52,11 @@ while not stopped:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:  #if space pressed
                     is_build_mode_on = game_manager.check_maze()  #quit build-mode if maze is correct
-        elif is_build_mode_on == False:
+        elif is_build_mode_on == False: #build mode off
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:  #if space pressed
-                    is_build_mode_on = True
-
+                    is_build_mode_on = True #build mode on
+                    game_manager.init_game = True #sets the cursor to startpoint
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 stopped = True

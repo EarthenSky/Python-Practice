@@ -11,16 +11,17 @@ tile_size = 40
 tile_list = [[tile.tile((x* tile_size, y* tile_size), (tile_size, tile_size), (255, 255, 255)) for y in range(18)] for x in range(32)]
 
 is_game_complete = False
-is_first_game_loop = True
+init_game = True
 
 def game_update():
-    global is_game_complete, is_first_game_loop
-
+    global is_game_complete, init_game
+    print "{}, {}".format(is_game_complete, init_game)
     #sets cursor to starting position
-    if is_first_game_loop == True:
+    if init_game == True:
+        print "first game loop"
         tile_mid = [tile_position[0] + tile_size / 2, tile_position[1] + tile_size / 2]
         pygame.mouse.set_pos(tile_mid)
-        is_first_game_loop = False
+        init_game = False
 
     #checks if cursor reaches the endpoint
     for x in range(len(tile_list)):
