@@ -28,6 +28,10 @@ def handle_input():
         if event.type == pygame.QUIT:
             game_stopped = True
 
+# This is for drawing stuff.  Called before update
+def draw():
+    pass
+
 # This is the "do game math" function.  Put any math or functional code here.
 # Called after handle_input.  This function is updated FPS times per second.
 # Remember to define any outside defined, non-constant varaibles as "global"
@@ -38,6 +42,8 @@ def update():
     #print str(my_var_non_const)
 
     print str(DISPLAY_SURFACE.get_width())  #DEBUG: this
+
+
 
 # This function initializes the pygame window.
 def init():
@@ -62,6 +68,8 @@ def gameloop():
         handle_input()  # First Gameloop Stage.
 
         update()  # Second Gameloop Stage.
+
+        draw() # Lasp Gameloop Stage.
 
         pygame.display.update() # Updates the display with changes.
 
