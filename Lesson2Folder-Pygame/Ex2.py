@@ -8,7 +8,7 @@ SCREEN_SIZE = [1024, 768]
 # Sets the prefered fps.  Mostly affects the speed of the main gameloop,
 # although complex calculations may cause the fps to drop.
 # Use delta_time to link movement to frame change speed.
-FPS = 1500
+FPS = 150
 
 LINE_WIDTH = 5
 RADIUS = SCREEN_SIZE[1] / 2.1

@@ -4,10 +4,11 @@ import ctypes
 
 # Constants.
 SCREEN_SIZE = [512, 768]
-FPS = 60  # Keep at >60 fps, cause input handling.
+FPS = 60  # Keep at >= 60 fps, cause input handling.
 
 # Starts and sets up pygame
 pygame.init()
+pygame.mixer.pre_init(44000, -16, 2, 2048)  # Setup mixer to avoid sound lag.
 DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE)
 pygame.display.set_caption("Ice Game")
 
@@ -23,6 +24,7 @@ obstacles.append(Ex3Objects.enemy( (450, 300 + 70*1) ))
 obstacles.append(Ex3Objects.enemy( (217, 300 + 70*2) ))
 obstacles.append(Ex3Objects.enemy( (485, 300 + 70*3) ))
 obstacles.append(Ex3Objects.enemy( (302, 300 + 70*4) ))
+obstacles.append(Ex3Objects.enemy( (10, 300 + 70*4) ))
 
 # This function handles any input.  Called before update.
 def handle_input():
@@ -67,7 +69,7 @@ def update():
 
     # Check if player wins and send message if they have.
     if player.get_position()[1] > 690:
-        message_string = u"YOU WIN THE ENTIRE GAME!"
+        message_string = u"YOU WIN ENTIRE GAME!"
         ctypes.windll.user32.MessageBoxW(0, message_string, u"CONGLAGURATION!", 0)
 
         game_stopped = True  # Close the game.

@@ -1,6 +1,10 @@
 import pygame
 import ctypes
 
+pygame.init()
+pygame.mixer.pre_init(44000, -16, 2, 2048)  # Setup mixer to avoid sound lag.
+feet_steps_sound = pygame.mixer.Sound('slide.wav')  # Load sound effect.
+
 # Constants
 GAME_FRICTION_COEFFICIENT = 0.99
 ENEMY_ROTATION_SPEED = 400
@@ -39,12 +43,16 @@ class player:
     def handle_input(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
+                feet_steps_sound.play()
                 self.is_w_key_down = True
             elif event.key == pygame.K_a:
+                feet_steps_sound.play()
                 self.is_a_key_down = True
             elif event.key == pygame.K_s:
+                feet_steps_sound.play()
                 self.is_s_key_down = True
             elif event.key == pygame.K_d:
+                feet_steps_sound.play()
                 self.is_d_key_down = True
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
@@ -63,13 +71,13 @@ class player:
     def update (self, dt):
         # Move player.
         if self.is_w_key_down == True:
-            self._impulse[1] -= 25.0
+            self._impulse[1] -= 10.0
         elif self.is_a_key_down == True:
-            self._impulse[0] -= 25.0
+            self._impulse[0] -= 10.0
         elif self.is_s_key_down == True:
-            self._impulse[1] += 25.0
+            self._impulse[1] += 10.0
         elif self.is_d_key_down == True:
-            self._impulse[0] += 25.0
+            self._impulse[0] += 10.0
 
         # Cap player slide / impulse speed, min and max.
         if abs(self._impulse[0]) > 500:
