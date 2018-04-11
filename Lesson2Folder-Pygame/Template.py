@@ -13,9 +13,15 @@ SCREEN_SIZE = [1024, 768]
 # Use delta_time to link movement to frame change speed.
 FPS = 60
 
+# Starts and sets up pygame
+pygame.init()
+DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE)
+pygame.display.set_caption("Father, what is my name?!")
+
 # Runtime constant used to modify movement. (More like readonly.)
 # Delta time is set to the change in time after each frame.
 # Multiply any movement by this to make it frame indepentent.
+# Delta time will be roughly less than 1/FPS (if FPS == 60, then ~< 0.0166666...)
 delta_time = 0
 
 # This is the flag that controls ending the game.
@@ -40,27 +46,14 @@ def update():
     #global my_var_non_const
     #my_var_non_const += 1
     #print str(my_var_non_const)
-
-    print str(DISPLAY_SURFACE.get_width())  #DEBUG: this
-
-
-
-# This function initializes the pygame window.
-def init():
-    global DISPLAY_SURFACE  # Initialize the global DISPLAY_SURFACE variable.
-
-    pygame.init()  # Start pygame.
-
-    # Makes a screen, size by screen_size and names it.
-    DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE)
-    pygame.display.set_caption("Random Shapes")
-
-    gameloop()  # Start gameloop.
+    pass
 
 # This is the gameloop section of code.
 # This template is designed so that you don't need to interact with
 # this function / section of the code.
 def gameloop():
+    global delta_time
+
     # This is the start of the gameloop.
     while not game_stopped:
         time_at_frame_start = pygame.time.get_ticks()  # Get time before calulations.
@@ -85,6 +78,6 @@ def gameloop():
     # Close pygame before application closes.
     pygame.quit()
 
-init()  # This is pretty much the only instruction run in the global scope.
+gameloop()  # This is pretty much the only instruction run in the global scope.
 
 print "DEBUG: Application Complete."
