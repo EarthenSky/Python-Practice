@@ -58,8 +58,7 @@ def update():
     # Update all obstacle objects and check collision with player
     for obstacle in obstacles:
         obstacle.update(dt)
-        #game_stopped = obstacle.check_player_collision(player.get_position(), player.get_size())
-        obstacle.check_player_collision(player.get_position(), player.get_size())
+        game_stopped = obstacle.check_player_collision(player.get_position(), player.get_size())
 
         # This prevents the game from saying you lose more times if you hit
         # multiple spike balls at the same time and end the function right away.
