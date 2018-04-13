@@ -46,11 +46,12 @@ def gameloop():
 
         # wait_time = time_single_frame_ - time_elapsed_
         wait_time = ((1 / float(FPS)) * 1000) - (pygame.time.get_ticks() - fs)
+        print "DEBUG: frame_lag = " + str( (1 / float(FPS)) * 1000 ) + " .. " + str( (pygame.time.get_ticks() - fs) )
 
         pygame.time.wait(int(wait_time))  # Pause the program for the set amount of time.
 
-        dt = wait_time / 1000.0  # This updates the delta time variable. (in seconds, not ms)
-        #print "DEBUG: dt = " + str(dt)
+        dt = ( wait_time + (pygame.time.get_ticks() - fs) ) / 1000.0  # This updates the delta time variable. (in seconds, not ms)
+        print "DEBUG: dt = " + str(dt)
 
     # Close pygame before application closes.
     pygame.quit()

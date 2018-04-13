@@ -47,11 +47,8 @@ def draw_rect(camera_id, surface, colour, rect, width=0):
     pygame.draw.rect(surface, colour, (rect[0] - _camera_dict[camera_id].get_position()[0], rect[1] - _camera_dict[camera_id].get_position()[1], rect[2], rect[3]), width)
 
 def draw_img(camera_id, surface, img, pos):
-    """Blits an image to a surface at the top left position."""
-    surface.blit(img, (pos[0] - _camera_dict[camera_id].get_position()[0], pos[1] - _camera_dict[camera_id].get_position()[0]))
-
-
-
+    """Blits an image to a surface at the top left position.  The rectangle parameter is structured like -> (x, y, width, height)"""
+    surface.blit(img, (pos[0] - _camera_dict[camera_id].get_position()[0], pos[1] - _camera_dict[camera_id].get_position()[1]))
 
 
 

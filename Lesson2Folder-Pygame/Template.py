@@ -72,7 +72,7 @@ def gameloop():
 
         pygame.time.wait(int(wait_time))  # Pause the program for the set amount of time.
 
-        delta_time = wait_time / 1000.0  # This updates the delta time variable. (in seconds, not ms)
+        delta_time = ( wait_time + (pygame.time.get_ticks() - time_at_frame_start) ) / 1000.0  # This updates the delta time variable. (in seconds, not ms)
         #print "DEBUG: delta_time = " + str(delta_time)
 
     # Close pygame before application closes.
