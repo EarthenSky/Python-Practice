@@ -15,9 +15,10 @@ class scene:
         self._size = size
         self._pos = pos
 
-        # Setup scene image.
-        self._img = pygame.image.load("Track.png").convert()
-        self._img = pygame.transform.scale(self._img, (self._size[0], self._size[1])).convert()
+        # Setup scene main image.
+        img = pygame.image.load("Track.png").convert()
+        img = pygame.transform.scale(img, (self._size[0], self._size[1])).convert()
+        self._img = img
 
     # Draws the img of the racetrack.
     def draw(self, surface):
@@ -87,17 +88,13 @@ class car:
         if is_w_key_down == True:
             self._speed += 6 * dt * 30
         elif is_s_key_down == True:
-            self._speed -= 12 * dt * 30
+            self._speed -= 18 * dt * 30
         else:
-            if self._speed >= 0:
-                self._speed -= 10 * dt * 30
-            else:
-                pass
-                #self._speed += 10 * dt
+            self._speed -= 10 * dt * 30
 
         # Speed capper -> Caps the speed value.
-        if self._speed > 10 * 30:
-            self._speed = 10 * 30
+        if self._speed > 15 * 30:
+            self._speed = 15 * 30
         elif is_s_key_down == False and self._speed < 0:
             self._speed = 0
         elif is_s_key_down == True and self._speed < -4 * 30:
@@ -105,9 +102,9 @@ class car:
 
         # Angle manager -> Manages how the user interacts with the angle variable.
         if is_a_key_down == True:
-            self._angle += 100 * dt
+            self._angle += dt * self._speed * 0.65
         elif is_d_key_down == True:
-            self._angle -= 100 * dt
+            self._angle -= dt * self._speed * 0.65
 
         # Move the player.
         run = float(self._speed) * math.cos(math.radians(-self._angle))
