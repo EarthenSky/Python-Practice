@@ -30,7 +30,7 @@ class camera:
     def set_position(self, pos):
         self._pos = pos
 
-# Instantiates a camera object
+# Instantiates a camera object.
 def create_camera(id, pos):
     """This function creates a camera object. Please pass a unique id to
     specify a camera to draw from.  Returns the passed id."""
@@ -46,14 +46,13 @@ def draw_rect(camera_id, surface, colour, rect, width=0):
     """Blits a rectangle into specified rectangle.  Width 0 makes the rect filled."""
     pygame.draw.rect(surface, colour, (rect[0] - _camera_dict[camera_id].get_position()[0], rect[1] - _camera_dict[camera_id].get_position()[1], rect[2], rect[3]), width)
 
-def draw_img(camera_id, surface, img, pos):
+def draw_img(camera_id, surface, img, pos, cut_area=None):
     """Blits an image to a surface at the top left position.  The rectangle parameter is structured like -> (x, y, width, height)"""
     surface.blit(img, (pos[0] - _camera_dict[camera_id].get_position()[0], pos[1] - _camera_dict[camera_id].get_position()[1]))
 
 
-
-
 """
+# Some Basic camera controlls...
 elif event.type == pygame.KEYDOWN:
     if event.key == pygame.K_w:
         pyCam.get_camera(main_cam).set_position( (pyCam.get_camera(main_cam).get_position()[0], pyCam.get_camera(main_cam).get_position()[1] + 10) )

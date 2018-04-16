@@ -54,25 +54,22 @@ def update():
 def gameloop():
     global delta_time
 
+    # Create the object that handles framerate regulation and delta_time.
+    framerate_clock = pygame.time.Clock()
+    delta_time = framerate_clock.tick(FPS) / 1000.0
+
     # This is the start of the gameloop.
     while not game_stopped:
-        time_at_frame_start = pygame.time.get_ticks()  # Get time before calulations.
-
         handle_input()  # First Gameloop Stage.
 
         update()  # Second Gameloop Stage.
 
-        draw() # Lasp Gameloop Stage.
+        draw() # Last Gameloop Stage.
 
         pygame.display.update() # Updates the display with changes.
 
-        # Set the wait_time (after calculations have been made) (in ms, not seconds)
-        # wait_time = time_single_frame_ - time_elapsed_
-        wait_time = ((1 / float(FPS)) * 1000) - (pygame.time.get_ticks() - time_at_frame_start)
-
-        pygame.time.wait(int(wait_time))  # Pause the program for the set amount of time.
-
-        delta_time = ( wait_time + (pygame.time.get_ticks() - time_at_frame_start) ) / 1000.0  # This updates the delta time variable. (in seconds, not ms)
+        # Pause pygame and calculate delta time.
+        delta_time = framerate_clock.tick(FPS) / 1000.0
         #print "DEBUG: delta_time = " + str(delta_time)
 
     # Close pygame before application closes.
