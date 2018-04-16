@@ -35,7 +35,7 @@ def handle_input():
         elif event.type == pygame.VIDEORESIZE:
             # This makes the game window resizable.
             SCREEN_SIZE = event.size
-            DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE, pygame.RESIZABLE)
+            DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE, pygame.RESIZABLE | pygame.DOUBLEBUF)
         elif car.check_input(event) == True:
             pass  # Check_input will return false if it did nothing and check the next item.
 
@@ -78,7 +78,7 @@ def gameloop():
 
         # Pause pygame and calculate delta time.
         dt = framerate_clock.tick(FPS) / 1000.0
-        #print "DEBUG: dt = " + str(dt) + ", fps -> " + str( framerate_clock.get_fps() )
+        print "DEBUG: dt = " + str(dt) + ", fps -> " + str( framerate_clock.get_fps() )
 
 
     # Close pygame before application closes.

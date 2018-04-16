@@ -17,8 +17,7 @@ class scene:
         self._pos = pos
 
         # Setup scene main image.
-        img = pygame.image.load("Track.png").convert()
-        #img = pygame.transform.scale(img, (self._size[0], self._size[1])).convert()
+        img = pygame.image.load("Track2.png").convert_alpha()
         self._img = img
 
         # Init start point and checkpoints
@@ -214,9 +213,9 @@ class car:
                 else:  # Right wheels.
                     self._angle -= dt * self._speed * 0.004
 
-            elif wheel_type[key] == 2: # If the wheel is on grass, the car decelerates until it is under a forth of the top speed.
-                if self._speed > 15 * 30 * 1.45 / 4:
-                    self._speed -= 6 * dt * 30 * (not is_s_key_down)
+            elif wheel_type[key] == 2: # If the wheel is on grass, the car decelerates until it is under a third of the top speed.
+                if self._speed > 15 * 30 * 1.45 / 3:
+                    self._speed -= 8 * dt * 30 * (not is_s_key_down)
 
                 if key < 2:  # Left wheels.
                     self._angle += dt * self._speed * 0.015
