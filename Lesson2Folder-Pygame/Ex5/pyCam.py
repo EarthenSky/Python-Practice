@@ -22,7 +22,7 @@ class camera:
     def get_id(self):
         return self._id
 
-    # Set the camera's position.
+    # Get the camera's position.
     def get_position(self):
         return self._pos
 
@@ -44,14 +44,25 @@ def get_camera(id):
 
 def draw_rect(camera_id, surface, colour, rect, width=0):
     """Blits a rectangle into specified rectangle.  Width 0 makes the rect filled."""
+
     pygame.draw.rect(surface, colour, (rect[0] - _camera_dict[camera_id].get_position()[0], rect[1] - _camera_dict[camera_id].get_position()[1], rect[2], rect[3]), width)
 
-def draw_img(camera_id, surface, img, pos, cut_area=None):
+def draw_img(camera_id, surface, img, scale_rect, cut_rect=None):
     """Blits an image to a surface at the top left position.  The rectangle parameter is structured like -> (x, y, width, height)"""
-    surface.blit(img, (pos[0] - _camera_dict[camera_id].get_position()[0], pos[1] - _camera_dict[camera_id].get_position()[1]))
-
+    surface.blit(img, (scale_rect[0] - _camera_dict[camera_id].get_position()[0], scale_rect[1] - _camera_dict[camera_id].get_position()[1]), cut_rect)
 
 """
+# Just in case...
+# Set position.
+#position = (scale_rect[0] - _camera_dict[camera_id].get_position()[0], scale_rect[1] - _camera_dict[camera_id].get_position()[1])
+
+# Set camera rotation.
+#blit_img = pygame.transform.rotate(img, _camera_dict[camera_id].get_rotation())
+#blit_img_rect = blit_img.get_rect(center=position)
+
+# Blit
+#surface.blit(blit_img, blit_img_rect, cut_rect)
+
 # Some Basic camera controlls...
 elif event.type == pygame.KEYDOWN:
     if event.key == pygame.K_w:

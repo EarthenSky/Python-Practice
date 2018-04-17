@@ -17,16 +17,40 @@ class scene:
         self._pos = pos
 
         # Setup scene main image.
-        img = pygame.image.load("Track2.png").convert_alpha()
+        img = pygame.image.load("Track3.png").convert_alpha()
         self._img = img
 
+        # Setup house img
+        house_img = pygame.image.load("House.png").convert_alpha()
+        self._house_img = pygame.transform.scale(house_img, (256, 256))
+
         # Init start point and checkpoints
-        self._startpoint = checkpoint((58, 1800), 0)
+        self.checkpoints = [
+            checkpoint((58, 1800), 0, False),
+            checkpoint((1250, 362), 1, True),
+            checkpoint((1325, 2552), 2, True),
+            checkpoint((3344, 192), 2, True),
+            checkpoint((2550, 3968), 2, True)
+        ]
+
+        # Set house position
+        self.house_pos = [
+            (1300, 1700),
+            (2800, 1000),
+            (1045, 686)
+        ]
 
     # Draws the img of the racetrack.
     def draw(self, surface):
-        pyCam.draw_img("main_cam", surface, self._img, (self._pos[0], self._pos[1]))
-        self._startpoint.draw(surface)
+        pyCam.draw_img( "main_cam", surface, self._img, (self._pos[0], self._pos[1]) )
+
+        # Draw checkpoints.
+        for val in self.checkpoints:
+            val.draw(surface)
+
+        # Draw houses.
+        for val in self.house_pos:
+            pyCam.draw_img("main_cam", surface, self._house_img, val)
 
 class car:
     """This is the car class.  This holds controls, image, position, drawing, etc..."""
@@ -91,7 +115,7 @@ class car:
         blit_img = pygame.transform.rotate(self._img, self._angle)
         blit_img_rect = blit_img.get_rect(center=self._pos)
 
-        pyCam.draw_img("main_cam", surface, blit_img, (blit_img_rect[0] + self._size[0]/2, blit_img_rect[1] + self._size[1]/2))
+        pyCam.draw_img("main_cam", surface, blit_img, (blit_img_rect[0] + self._size[0]/2, blit_img_rect[1] + self._size[1]/2, blit_img_rect[2], blit_img_rect[3]))
         #print str(self._check_wheels(surface))
 
     # Returns a tuple containing the values of each wheel.  0 is pavement, 1 is dirt, and 2 is grass.  -1 is error.
@@ -214,8 +238,8 @@ class car:
                     self._angle -= dt * self._speed * 0.004
 
             elif wheel_type[key] == 2: # If the wheel is on grass, the car decelerates until it is under a third of the top speed.
-                if self._speed > 15 * 30 * 1.45 / 3:
-                    self._speed -= 8 * dt * 30 * (not is_s_key_down)
+                if self._speed > 15 * 30 * 1.45 / 2.9:
+                    self._speed -= 8.2 * dt * 30 * (not is_s_key_down)
 
                 if key < 2:  # Left wheels.
                     self._angle += dt * self._speed * 0.015
@@ -240,9 +264,9 @@ class car:
 
         # Angle manager -> Manages how the user interacts with the angle variable. (turn speed)
         if is_a_key_down == True:
-            self._angle += dt * self._speed * 0.2
+            self._angle += dt * self._speed * 0.18
         elif is_d_key_down == True:
-            self._angle -= dt * self._speed * 0.2
+            self._angle -= dt * self._speed * 0.18
 
         # Moves the player.
         run = float(self._speed) * math.cos(math.radians(-self._angle))
@@ -253,20 +277,31 @@ class car:
 class checkpoint:
     """This is the checkpoint class.  The 0th checkpoint (set number to zero)
         is the starting checkered line thing."""
-    def __init__(self, pos, number):
+    def __init__(self, pos, number, rot_flip=False):
         self._pos = pos
         self._number = number
 
         self._size = (256, 48)
 
+        self._rot_flip = rot_flip
+
+        # Assign image based on number.
         if number == 0:
             self._img = pygame.image.load("StartPoint.png").convert()
         else:
-            self._img = pygame.image.load("CheckPoint.png").convert()
+            self._img = pygame.image.load("CheckPoint.png").convert_alpha()
 
     # Draws the img of the checkpoint.
     def draw(self, surface):
-        pyCam.draw_img("main_cam", surface, self._img, (self._pos[0], self._pos[1], self._size[0], self._size[1]))
+        # Rotate the sprite if needed to be.
+        if self._rot_flip == True:
+            blit_img = pygame.transform.rotate(self._img, 990)
+            blit_img_rect = blit_img.get_rect(center=self._pos)
+
+            pyCam.draw_img("main_cam", surface, blit_img, (blit_img_rect[0], blit_img_rect[1]))
+
+        else:
+            pyCam.draw_img("main_cam", surface, self._img, (self._pos[0], self._pos[1]))
 
 class ui:
     """This is the ui class.  This holds things like the lap timer and speed gui.
@@ -274,7 +309,7 @@ class ui:
 
     def __init__(self):
         # Init the ui's font.
-        self._font = pygame.font.SysFont("monospace", 15)
+        self._font = pygame.font.SysFont("monospace", 48)
         self._text = self._font.render("Speed: {} k/h".format( 0 ), 1, (255, 255, 255))
 
     # Draws the img of the checkpoint.

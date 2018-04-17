@@ -6,7 +6,7 @@ import Ex5Objects
 SCREEN_SIZE = [1024, 768]
 FPS = 120
 
-# Starts and sets up pygame.dd
+# Starts and sets up pygame.
 pygame.init()
 DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE, pygame.RESIZABLE | pygame.DOUBLEBUF)
 pygame.display.set_caption("Car driving game.")
@@ -41,7 +41,7 @@ def handle_input():
 
 # This is for drawing stuff.  Called before update.
 def draw():
-    DISPLAY_SURFACE.fill( (0, 0, 0) )  # Draw the background.
+    DISPLAY_SURFACE.fill( (10, 200, 10) )  # Draw the background.
 
     scene.draw(DISPLAY_SURFACE)
     car.draw(DISPLAY_SURFACE)
