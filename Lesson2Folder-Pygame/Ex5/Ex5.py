@@ -41,7 +41,7 @@ def handle_input():
 
 # This is for drawing stuff.  Called before update.
 def draw():
-    DISPLAY_SURFACE.fill( (10, 200, 10) )  # Draw the background.
+    DISPLAY_SURFACE.fill( (10, 150, 10) )  # Draw the background.
 
     scene.draw(DISPLAY_SURFACE)
     car.draw(DISPLAY_SURFACE)
@@ -51,6 +51,7 @@ def draw():
 # This is the "do game math" function.  Put any math or functional code here.
 def update():
     car.update(dt, DISPLAY_SURFACE)
+    scene.update(car.get_position())  # Update the scene after the car.
 
     ui.update(car.get_speed())
 

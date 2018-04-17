@@ -40,6 +40,11 @@ class scene:
             (1045, 686)
         ]
 
+    def update(self, car_pos):
+        # Draw checkpoints.
+        for val in self.checkpoints:
+            val.active(car_pos)
+
     # Draws the img of the racetrack.
     def draw(self, surface):
         pyCam.draw_img( "main_cam", surface, self._img, (self._pos[0], self._pos[1]) )
@@ -230,6 +235,8 @@ class car:
         for key in range(len(wheel_type)):
             if wheel_type[key] == 1:  # If the wheel is on dirt, the car decelerates a bit until it is under half of the top speed.
                 if self._speed > 15 * 30 * 1.45 / 2:
+                    self._speed -= 3.5 * dt * 30 * (not is_s_key_down)
+                else:
                     self._speed -= 2 * dt * 30 * (not is_s_key_down)
 
                 if key < 2:  # Left wheels.
@@ -238,8 +245,8 @@ class car:
                     self._angle -= dt * self._speed * 0.004
 
             elif wheel_type[key] == 2: # If the wheel is on grass, the car decelerates until it is under a third of the top speed.
-                if self._speed > 15 * 30 * 1.45 / 2.9:
-                    self._speed -= 8.2 * dt * 30 * (not is_s_key_down)
+                if self._speed > 15 * 30 * 1.45 / 2.7:
+                    self._speed -= 8.3 * dt * 30 * (not is_s_key_down)
 
                 if key < 2:  # Left wheels.
                     self._angle += dt * self._speed * 0.015
@@ -255,18 +262,18 @@ class car:
             self._speed -= 10 * dt * 30
 
         # Speed capper -> Caps the speed value. (top speed)
-        if self._speed > 15 * 30 * 1.45:
-            self._speed = 15 * 30 * 1.45
+        if self._speed > 15 * 30 * 1.45 * 1.05:
+            self._speed = 15 * 30 * 1.45 * 1.05
         elif is_s_key_down == False and self._speed < 0:
             self._speed = 0
-        elif is_s_key_down == True and self._speed < -4 * 30:
-            self._speed = -4 * 30
+        elif is_s_key_down == True and self._speed < -4 * 30 * 1.5:
+            self._speed = -4 * 30 * 1.5
 
         # Angle manager -> Manages how the user interacts with the angle variable. (turn speed)
         if is_a_key_down == True:
-            self._angle += dt * self._speed * 0.18
+            self._angle += dt * self._speed * 0.195
         elif is_d_key_down == True:
-            self._angle -= dt * self._speed * 0.18
+            self._angle -= dt * self._speed * 0.195
 
         # Moves the player.
         run = float(self._speed) * math.cos(math.radians(-self._angle))
@@ -290,6 +297,20 @@ class checkpoint:
             self._img = pygame.image.load("StartPoint.png").convert()
         else:
             self._img = pygame.image.load("CheckPoint.png").convert_alpha()
+
+    def active(self, car_pos):
+        temp_size = 0
+        if self._rot_flip == True:
+            temp_size = (self._size[1], self._size[0])
+        else:
+            temp_size = self._size
+
+        relative_pos = (self._pos[0] - car_pos[0], self._pos[1] - car_pos[1])
+
+        if relative_pos[0] > 0 and relative_pos[0] < 0 + temp_size[0] and relative_pos[1] > 1 and relative_pos[1] < 0 + temp_size[1]:
+            print "CHECK!"
+
+
 
     # Draws the img of the checkpoint.
     def draw(self, surface):
@@ -316,6 +337,23 @@ class ui:
     def update(self, car_speed):
         # Create text
         self._text = self._font.render("Speed: {} k/h".format( int(car_speed/4) ), 1, (255, 255, 255))
+
+    # Draws the ui to the screen, not the camera.
+    def draw(self, surface):
+        surface.blit(self._text, (16, 16))
+
+class button:
+    """This is a button class.  It calls a function when pressed."""
+
+    def __init__(self, pos, size):
+        # Init the position and size.
+        self._pos = pos
+        self._size = size
+
+    # Check if clicked.
+    def isClicked(self):
+        # TODO:
+        pass
 
     # Draws the ui to the screen, not the camera.
     def draw(self, surface):
