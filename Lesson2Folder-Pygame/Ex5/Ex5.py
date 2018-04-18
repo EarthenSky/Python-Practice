@@ -5,6 +5,7 @@ import Ex5Objects
 # Constants
 SCREEN_SIZE = [1024, 768]
 FPS = 120
+CURRENT_SCENE = 0
 
 # Starts and sets up pygame.
 pygame.init()
@@ -21,6 +22,15 @@ ui = Ex5Objects.ui()
 scene = Ex5Objects.scene((int(4096), int(4096)), (0, 0))
 car = Ex5Objects.car((128, 64), (150, 1900))
 
+# Function to pass to game button.
+def start_game():
+    global CURRENT_SCENE
+    CURRENT_SCENE = 1
+    print ("STAAATOU")
+
+# Create game Start button.
+start_game_button = Ex5Objects.button( (SCREEN_SIZE[0]/3, SCREEN_SIZE[1]/3), (SCREEN_SIZE[0]/3, SCREEN_SIZE[1]/3), start_game)
+
 # Runtime Constants
 dt = 0
 game_stopped = False
@@ -29,35 +39,54 @@ game_stopped = False
 def handle_input():
     global game_stopped, DISPLAY_SURFACE, SCREEN_SIZE
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            game_stopped = True
-        elif event.type == pygame.VIDEORESIZE:
-            # This makes the game window resizable.
-            SCREEN_SIZE = event.size
-            DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE, pygame.RESIZABLE | pygame.DOUBLEBUF)
-        elif car.check_input(event) == True:
-            pass  # Check_input will return false if it did nothing and check the next item.
+    if CURRENT_SCENE == 0:  # Menu
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_stopped = True
+            elif event.type == pygame.VIDEORESIZE:
+                # This makes the game window resizable.
+                SCREEN_SIZE = event.size
+                DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE, pygame.RESIZABLE | pygame.DOUBLEBUF)
+
+    elif CURRENT_SCENE == 1:  # Game
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_stopped = True
+            elif event.type == pygame.VIDEORESIZE:
+                # This makes the game window resizable.
+                SCREEN_SIZE = event.size
+                DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE, pygame.RESIZABLE | pygame.DOUBLEBUF)
+            elif car.check_input(event) == True:
+                pass  # Check_input will return false if it did nothing and check the next item.
 
 # This is for drawing stuff.  Called before update.
 def draw():
-    DISPLAY_SURFACE.fill( (10, 150, 10) )  # Draw the background.
+    if CURRENT_SCENE == 0:  # Menu
+        DISPLAY_SURFACE.fill( (10, 150, 10) )  # Draw the background.
+        start_game_button.draw(DISPLAY_SURFACE)
 
-    scene.draw(DISPLAY_SURFACE)
-    car.draw(DISPLAY_SURFACE)
+    elif CURRENT_SCENE == 1:  # Game
+        DISPLAY_SURFACE.fill( (10, 150, 10) )  # Draw the background.
 
-    ui.draw(DISPLAY_SURFACE)  # Draw ui over everything.
+        scene.draw(DISPLAY_SURFACE)
+        car.draw(DISPLAY_SURFACE)
+
+        ui.draw(DISPLAY_SURFACE)  # Draw ui over everything.
 
 # This is the "do game math" function.  Put any math or functional code here.
 def update():
-    car.update(dt, DISPLAY_SURFACE)
-    scene.update(car.get_position())  # Update the scene after the car.
+    if CURRENT_SCENE == 0:  # Menu
+        start_game_button.update()
 
-    ui.update(car.get_speed())
+    elif CURRENT_SCENE == 1:  # Game
+        car.update(dt, DISPLAY_SURFACE)
+        scene.update(car.get_position())  # Update the scene after the car.
 
-    # Calculate the car's centre position then set the camera to it.
-    car_center_position = (car.get_position()[0] - SCREEN_SIZE[0]/2, car.get_position()[1] - SCREEN_SIZE[1]/2)
-    pyCam.get_camera(main_cam).set_position(car_center_position)
+        ui.update(car.get_speed(), dt)
+
+        # Calculate the car's centre position then set the camera to it.
+        car_center_position = (car.get_position()[0] - SCREEN_SIZE[0]/2, car.get_position()[1] - SCREEN_SIZE[1]/2)
+        pyCam.get_camera(main_cam).set_position(car_center_position)
 
 # This is the gameloop section of code.
 def gameloop():
@@ -79,8 +108,7 @@ def gameloop():
 
         # Pause pygame and calculate delta time.
         dt = framerate_clock.tick(FPS) / 1000.0
-        print "DEBUG: dt = " + str(dt) + ", fps -> " + str( framerate_clock.get_fps() )
-
+        #print "DEBUG: dt = " + str(dt) + ", fps -> " + str( framerate_clock.get_fps() )
 
     # Close pygame before application closes.
     pygame.quit()

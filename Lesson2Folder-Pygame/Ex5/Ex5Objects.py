@@ -227,17 +227,11 @@ class car:
         # Before player is moved, check where it's wheels are on the colour map.
         wheel_type = self._check_wheels(surface)
 
-        # Init movement modifiers.
-        #top_speed_mod = 1
-        #acceleration_mod = 1
-
         # Have wheel position affect the car, before the player is moved. (ground mod)
         for key in range(len(wheel_type)):
             if wheel_type[key] == 1:  # If the wheel is on dirt, the car decelerates a bit until it is under half of the top speed.
                 if self._speed > 15 * 30 * 1.45 / 2:
                     self._speed -= 3.5 * dt * 30 * (not is_s_key_down)
-                else:
-                    self._speed -= 2 * dt * 30 * (not is_s_key_down)
 
                 if key < 2:  # Left wheels.
                     self._angle += dt * self._speed * 0.004
@@ -298,19 +292,26 @@ class checkpoint:
         else:
             self._img = pygame.image.load("CheckPoint.png").convert_alpha()
 
+    # If the current checkpoint has the car in it.
     def active(self, car_pos):
+        # Rotate the size if needed.
         temp_size = 0
         if self._rot_flip == True:
             temp_size = (self._size[1], self._size[0])
+            # Modify car_pos to hit the checkpoints. (different for different rotations.)
+            car_pos = (car_pos[0] + temp_size[0], car_pos[1] - temp_size[1]/3)
         else:
             temp_size = self._size
+            # Modify car_pos to hit the checkpoints.
+            car_pos = (car_pos[0] - temp_size[0]/1.3, car_pos[1] - temp_size[1]/3)
 
-        relative_pos = (self._pos[0] - car_pos[0], self._pos[1] - car_pos[1])
+        # Distance between car and self.
+        distance = (self._pos[0] - car_pos[0], self._pos[1] - car_pos[1])
 
-        if relative_pos[0] > 0 and relative_pos[0] < 0 + temp_size[0] and relative_pos[1] > 1 and relative_pos[1] < 0 + temp_size[1]:
-            print "CHECK!"
-
-
+        if ( distance[0] > 0 and distance[0] < 0 + temp_size[0] ) and ( distance[1] > 0 and distance[1] < 0 + temp_size[1] ):
+            return True
+        else:
+            return False
 
     # Draws the img of the checkpoint.
     def draw(self, surface):
@@ -330,31 +331,50 @@ class ui:
 
     def __init__(self):
         # Init the ui's font.
-        self._font = pygame.font.SysFont("monospace", 48)
-        self._text = self._font.render("Speed: {} k/h".format( 0 ), 1, (255, 255, 255))
+        self._speed_font = pygame.font.SysFont("monospace", 48)
+        self._speed_text = self._speed_font.render("Speed: {} km/h".format( 0 ), 1, (255, 255, 255))
+
+        self._timer_value = 0.0
+        self._timer_font = pygame.font.SysFont("serif", 48)
+        self._timer_text = self._timer_font.render("Timer: {}s".format( 0 ), 1, (255, 255, 255))
 
     # Draws the img of the checkpoint.
-    def update(self, car_speed):
-        # Create text
-        self._text = self._font.render("Speed: {} k/h".format( int(car_speed/4) ), 1, (255, 255, 255))
+    def update(self, car_speed, dt):
+        # Update speed text.
+        self._speed_text = self._speed_font.render("Speed: {} k/h".format( int(car_speed/4) ), 1, (255, 255, 255))
+
+        # Update the timer's time value. (by the time the last frame took [dt or delta_time])
+        self._timer_value += dt
+        self._timer_text = self._timer_font.render("Timer: {}:{}s".format( int(self._timer_value/60), float(int((self._timer_value%60.0)*100.0))/100.0 ), 1, (255, 255, 255))
 
     # Draws the ui to the screen, not the camera.
     def draw(self, surface):
-        surface.blit(self._text, (16, 16))
+        surface.blit(self._speed_text, (16, 16))
+        surface.blit(self._timer_text, (16, 128))
 
 class button:
     """This is a button class.  It calls a function when pressed."""
 
-    def __init__(self, pos, size):
+    def __init__(self, pos, size, pressed, operands=None):
         # Init the position and size.
         self._pos = pos
         self._size = size
 
-    # Check if clicked.
-    def isClicked(self):
-        # TODO:
-        pass
+        self._function = pressed
+        self._operands = operands
+
+    # If clicked, run function.
+    def update(self):
+        if pygame.mouse.get_pressed()[0] == True:
+            mouse_pos = pygame.mouse.get_pos()
+
+            # Check if mouse is inside the button.
+            if ( mouse_pos[0] < self._pos[0] + self._size[0] and mouse_pos[0] > self._pos[0] ) and ( mouse_pos[1] < self._pos[1] + self._size[1] and mouse_pos[1] > self._pos[1] ):
+                if self._operands == None:
+                    self._function()
+                else:
+                    self._function(self._operands)
 
     # Draws the ui to the screen, not the camera.
     def draw(self, surface):
-        surface.blit(self._text, (16, 16))
+        pygame.draw.rect(surface, (100, 100, 100), (self._pos[0], self._pos[1], self._size[0], self._size[1]), 0)
