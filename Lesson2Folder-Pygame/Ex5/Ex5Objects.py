@@ -88,7 +88,19 @@ class car:
     def check_input(self, event):
         global is_w_key_down, is_a_key_down, is_s_key_down, is_d_key_down
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
+            if event.key == pygame.K_SPACE:
+                is_w_key_down = True
+                return True
+            elif event.key == pygame.K_LEFT:
+                is_a_key_down = True
+                return True
+            elif event.key == pygame.K_DOWN:
+                is_s_key_down = True
+                return True
+            elif event.key == pygame.K_RIGHT:
+                is_d_key_down = True
+                return True
+            elif event.key == pygame.K_w:
                 is_w_key_down = True
                 return True
             elif event.key == pygame.K_a:
@@ -101,7 +113,19 @@ class car:
                 is_d_key_down = True
                 return True
         elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_w:
+            if event.key == pygame.K_SPACE:
+                is_w_key_down = False
+                return True
+            elif event.key == pygame.K_LEFT:
+                is_a_key_down = False
+                return True
+            elif event.key == pygame.K_DOWN:
+                is_s_key_down = False
+                return True
+            elif event.key == pygame.K_RIGHT:
+                is_d_key_down = False
+                return True
+            elif event.key == pygame.K_w:
                 is_w_key_down = False
                 return True
             elif event.key == pygame.K_a:
