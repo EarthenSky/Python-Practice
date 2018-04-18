@@ -20,30 +20,81 @@ class scene:
         img = pygame.image.load("Track3.png").convert_alpha()
         self._img = img
 
-        # Setup house img
+        # Setup house img.
         house_img = pygame.image.load("House.png").convert_alpha()
         self._house_img = pygame.transform.scale(house_img, (256, 256))
 
-        # Init start point and checkpoints
+        # Set the checkpoints that need to be hit before hitting the end flag.
+        self._checkpoints_to_hit = ""
+
+        self._can_do_it = False
+        self._wait_timer = 0.0
+
+        # Extra time to wait.
+        self._timer_mod = 0
+
+        # Init start point and checkpoints.
         self.checkpoints = [
             checkpoint((58, 1800), 0, False),
             checkpoint((1250, 362), 1, True),
             checkpoint((1325, 2552), 2, True),
-            checkpoint((3344, 192), 2, True),
-            checkpoint((2550, 3968), 2, True)
+            checkpoint((3344, 192), 3, True),
+            checkpoint((2550, 3968), 4, True)
         ]
 
-        # Set house position
+        # What lap you're on.
+        self.lap_counter = 0
+
+        self.is_game_complete = False
+
+        # Set house position.
         self.house_pos = [
             (1300, 1700),
             (2800, 1000),
             (1045, 686)
         ]
 
-    def update(self, car_pos):
-        # Draw checkpoints.
+    # Output the timermod then set to zero.
+    def get_timer_mod(self):
+        out = self._timer_mod
+        self._timer_mod = 0
+
+        return out
+
+    def update(self, car_pos, dt):
+        print str(dt)
+
+        if self.lap_counter > 2:
+            self.is_game_complete = True
+
+        if self._can_do_it == True:
+            self._wait_timer += float(dt)
+            if self._wait_timer > 3:
+                self._can_do_it == False
+
+        # Update the checkpoints and output if it is over the correct one.
         for val in self.checkpoints:
-            val.active(car_pos)
+            if val.active(car_pos):
+                if self._checkpoints_to_hit.find( str(val.number) ) > 0:  # Case, checkpoint has not been hit yet this lap.
+                    # Remove the checkpoint.
+                    self._checkpoints_to_hit = self._checkpoints_to_hit.replace( str(val.number) , "")
+                    print str(val.number) + " v2"
+
+                    return str(val.number)
+
+                elif val.number == 0 and self._can_do_it == False:  # Case: hitting the start line
+                    self._can_do_it = True
+                    self._wait_timer = 0.0
+
+                    self._timer_mod = len(self._checkpoints_to_hit) * 15  # add 15s each missed checkpoint.
+
+                    self.lap_counter += 1
+
+                    self._checkpoints_to_hit = "1234"  # Reset checkpoints to hit.
+
+                    print str(val.number) + " v1"
+
+                    return str(val.number)
 
     # Draws the img of the racetrack.
     def draw(self, surface):
@@ -255,7 +306,7 @@ class car:
         for key in range(len(wheel_type)):
             if wheel_type[key] == 1:  # If the wheel is on dirt, the car decelerates a bit until it is under half of the top speed.
                 if self._speed > 15 * 30 * 1.45 / 2:
-                    self._speed -= 3.5 * dt * 30 * (not is_s_key_down)
+                    self._speed -= 3.8 * dt * 30 * (not is_s_key_down)
 
                 if key < 2:  # Left wheels.
                     self._angle += dt * self._speed * 0.004
@@ -263,7 +314,7 @@ class car:
                     self._angle -= dt * self._speed * 0.004
 
             elif wheel_type[key] == 2: # If the wheel is on grass, the car decelerates until it is under a third of the top speed.
-                if self._speed > 15 * 30 * 1.45 / 2.7:
+                if self._speed > 15 * 30 * 1.45 / 2.5:
                     self._speed -= 8.3 * dt * 30 * (not is_s_key_down)
 
                 if key < 2:  # Left wheels.
@@ -304,7 +355,7 @@ class checkpoint:
         is the starting checkered line thing."""
     def __init__(self, pos, number, rot_flip=False):
         self._pos = pos
-        self._number = number
+        self.number = number
 
         self._size = (256, 48)
 
@@ -358,26 +409,48 @@ class ui:
         self._speed_font = pygame.font.SysFont("monospace", 48)
         self._speed_text = self._speed_font.render("Speed: {} km/h".format( 0 ), 1, (255, 255, 255))
 
+        # Init timer stuff.
+        self.timer_is_stopped = False
         self._timer_value = 0.0
         self._timer_font = pygame.font.SysFont("serif", 48)
         self._timer_text = self._timer_font.render("Timer: {}:{}s".format( 0, 0 ), 1, (255, 255, 255))
 
+        # Init checkpoint counter stuff.
+        self._checkpoints = ""
+        self._checkpoint_font = pygame.font.SysFont("sans-serif", 48)
+        self._checkpoint_text = self._checkpoint_font.render(self._checkpoints, 1, (255, 255, 255))
+
+        # Init checkpoint counter stuff.
+        self._lap_font = pygame.font.SysFont("monospace", 64)
+        self._lap_text = self._lap_font.render(str(0), 1, (255, 255, 255))
+
     # Draws the img of the checkpoint.
-    def update(self, car_speed, dt):
+    def update(self, car_speed, dt, timer_mod, current_lap):
         # Update speed text.
         self._speed_text = self._speed_font.render("Speed: {} km/h".format( int(car_speed/4) ), 1, (255, 255, 255))
 
         # Update the timer's time value. (by the time the last frame took [dt or delta_time])
-        self._timer_value += dt
-        self._timer_text = self._timer_font.render("Timer: {}:{}s".format( int(self._timer_value/60), float(int((self._timer_value%60.0)*100.0))/100.0 ), 1, (255, 255, 255))
+        if self.timer_is_stopped == False:
+            self._timer_value += dt
+            self._timer_text = self._timer_font.render("Timer: {}:{}s".format( int(self._timer_value/60), float(int((self._timer_value%60.0)*100.0))/100.0 ), 1, (255, 255, 255))
+
+        # Update the lap counter.
+        self._lap_text = self._lap_font.render(str(current_lap), 1, (255, 255, 255))
+
+    # Sets the checkpoints.
+    def set_checkpoints(self, str_checkpoints):
+        self._checkpoints = str_checkpoints
+        self._checkpoint_text = self._checkpoint_font.render(self._checkpoints, 1, (255, 255, 255))
 
     # Draws the ui to the screen, not the camera.
     def draw(self, surface):
         surface.blit(self._speed_text, (16, 16))
         surface.blit(self._timer_text, (16, 128))
+        surface.blit(self._checkpoint_text, (16, 256-32))
+        surface.blit(self._lap_text, (16, 256 + 128))
 
 class button:
-    """This is a button class.  It calls a function when pressed."""
+    """This is a button class.  It calls a function when pressed.  Uses the default font for text."""
 
     def __init__(self, pos, size, pressed, text, operands=None):
         # Init the position and size.
@@ -387,7 +460,8 @@ class button:
         self._function = pressed
         self._operands = operands
 
-        self._text = text
+        self._font = pygame.font.SysFont("monospace", 48)
+        self._text_string = text
 
     # If clicked, run function.
     def update(self):
@@ -409,3 +483,7 @@ class button:
     # Draws the ui to the screen, not the camera.
     def draw(self, surface):
         pygame.draw.rect(surface, (100, 100, 100), (self._pos[0], self._pos[1], self._size[0], self._size[1]), 0)
+
+        # Draw the text to the string.
+        text = self._font.render(self._text_string, 1, (255, 255, 255))
+        surface.blit(text, (self._pos[0], self._pos[1] + self._size[1]/2 - 48/2))

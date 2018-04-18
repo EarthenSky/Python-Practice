@@ -64,7 +64,7 @@ def handle_input():
 # This is for drawing stuff.  Called before update.
 def draw():
     if CURRENT_SCENE == 0:  # Menu
-        DISPLAY_SURFACE.fill( (10, 150, 10) )  # Draw the background.
+        DISPLAY_SURFACE.fill( (2, 2, 2) )  # Draw the background.
         start_game_button.draw(DISPLAY_SURFACE)
 
     elif CURRENT_SCENE == 1:  # Game
@@ -82,9 +82,12 @@ def update():
 
     elif CURRENT_SCENE == 1:  # Game
         car.update(dt, DISPLAY_SURFACE)
-        scene.update(car.get_position())  # Update the scene after the car.
 
-        ui.update(car.get_speed(), dt)
+        ui.update(car.get_speed(), dt, scene.get_timer_mod(), scene.lap_counter)
+        ui.timer_is_stopped = scene.is_game_complete
+
+        # Update the scene after the car.  Pass the checkpoint checker value to the ui.
+        ui.set_checkpoints(scene.update(car.get_position(), dt))
 
         # Calculate the car's centre position then set the camera to it.
         car_center_position = (car.get_position()[0] - SCREEN_SIZE[0]/2, car.get_position()[1] - SCREEN_SIZE[1]/2)
