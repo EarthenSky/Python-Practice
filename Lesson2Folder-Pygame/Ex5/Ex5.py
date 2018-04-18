@@ -26,10 +26,10 @@ car = Ex5Objects.car((128, 64), (150, 1900))
 def start_game():
     global CURRENT_SCENE
     CURRENT_SCENE = 1
-    print ("STAAATOU")
+    print ("STAAATOU!!")
 
 # Create game Start button.
-start_game_button = Ex5Objects.button( (SCREEN_SIZE[0]/3, SCREEN_SIZE[1]/3), (SCREEN_SIZE[0]/3, SCREEN_SIZE[1]/3), start_game)
+start_game_button = Ex5Objects.button( (SCREEN_SIZE[0]/3, SCREEN_SIZE[1]/3), (SCREEN_SIZE[0]/3, SCREEN_SIZE[1]/3), start_game, "START GAME")
 
 # Runtime Constants
 dt = 0
@@ -47,6 +47,8 @@ def handle_input():
                 # This makes the game window resizable.
                 SCREEN_SIZE = event.size
                 DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE, pygame.RESIZABLE | pygame.DOUBLEBUF)
+
+                start_game_button.resize( (SCREEN_SIZE[0]/3, SCREEN_SIZE[1]/3), (SCREEN_SIZE[0]/3, SCREEN_SIZE[1]/3) )
 
     elif CURRENT_SCENE == 1:  # Game
         for event in pygame.event.get():

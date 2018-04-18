@@ -336,12 +336,12 @@ class ui:
 
         self._timer_value = 0.0
         self._timer_font = pygame.font.SysFont("serif", 48)
-        self._timer_text = self._timer_font.render("Timer: {}s".format( 0 ), 1, (255, 255, 255))
+        self._timer_text = self._timer_font.render("Timer: {}:{}s".format( 0, 0 ), 1, (255, 255, 255))
 
     # Draws the img of the checkpoint.
     def update(self, car_speed, dt):
         # Update speed text.
-        self._speed_text = self._speed_font.render("Speed: {} k/h".format( int(car_speed/4) ), 1, (255, 255, 255))
+        self._speed_text = self._speed_font.render("Speed: {} km/h".format( int(car_speed/4) ), 1, (255, 255, 255))
 
         # Update the timer's time value. (by the time the last frame took [dt or delta_time])
         self._timer_value += dt
@@ -355,13 +355,15 @@ class ui:
 class button:
     """This is a button class.  It calls a function when pressed."""
 
-    def __init__(self, pos, size, pressed, operands=None):
+    def __init__(self, pos, size, pressed, text, operands=None):
         # Init the position and size.
         self._pos = pos
         self._size = size
 
         self._function = pressed
         self._operands = operands
+
+        self._text = text
 
     # If clicked, run function.
     def update(self):
@@ -374,6 +376,11 @@ class button:
                     self._function()
                 else:
                     self._function(self._operands)
+
+    # Resizes the button.
+    def resize(self, pos, size):
+        self._pos = pos
+        self._size = size
 
     # Draws the ui to the screen, not the camera.
     def draw(self, surface):
