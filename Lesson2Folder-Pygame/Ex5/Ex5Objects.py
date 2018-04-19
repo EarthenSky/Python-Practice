@@ -326,12 +326,12 @@ class car:
         for key in range(len(wheel_type)):
             if wheel_type[key] == 1:  # If the wheel is on dirt, the car decelerates a bit until it is under half of the top speed.
                 if self._speed > 15 * 30 * 1.45 / 2:
-                    self._speed -= 3.8 * dt * 30 * (not is_s_key_down)
+                    self._speed -= 3.6 * dt * 30 * (not is_s_key_down)
 
                 if key < 2:  # Left wheels.
-                    self._angle += dt * self._speed * 0.004
+                    self._angle += dt * self._speed * 0.005
                 else:  # Right wheels.
-                    self._angle -= dt * self._speed * 0.004
+                    self._angle -= dt * self._speed * 0.005
 
             elif wheel_type[key] == 2: # If the wheel is on grass, the car decelerates until it is under a third of the top speed.
                 if self._speed > 15 * 30 * 1.45 / 2.5:
@@ -358,15 +358,21 @@ class car:
         elif is_s_key_down == True and self._speed < -4 * 30 * 1.5:
             self._speed = -4 * 30 * 1.5
 
+        # Pre assign the speed value
+        out_speed = self._speed
+
         # Angle manager -> Manages how the user interacts with the angle variable. (turn speed)
         if is_a_key_down == True:
-            self._angle += dt * self._speed * 0.195
+            self._angle += dt * self._speed * 0.19
+            out_speed = self._speed * 0.98
+
         elif is_d_key_down == True:
-            self._angle -= dt * self._speed * 0.195
+            self._angle -= dt * self._speed * 0.19
+            out_speed = self._speed * 0.98
 
         # Moves the player.
-        run = float(self._speed) * math.cos(math.radians(-self._angle))
-        rise = float(self._speed) * math.sin(math.radians(-self._angle))
+        run = float(out_speed) * math.cos(math.radians(-self._angle))
+        rise = float(out_speed) * math.sin(math.radians(-self._angle))
 
         self._pos = (self._pos[0] + run * dt, self._pos[1] + rise * dt)
 
@@ -462,7 +468,7 @@ class ui:
 
             # Write the time to a file.
             with open("scores.errerr.7bxnlk.jp.win85", "a") as out_file:
-                out_file.write( "Time: {}:{}s \n\r".format( int(self._timer_value/60), float(int((self._timer_value%60.0)*100.0))/100.0 ) )
+                out_file.write( "Time: {}:{}s".format( int(self._timer_value/60), float(int((self._timer_value%60.0)*100.0))/100.0 ) )
 
             # Go to the menu scene and reset the old one.
             self.reset()
