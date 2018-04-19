@@ -77,13 +77,14 @@ def draw():
 
 # This is the "do game math" function.  Put any math or functional code here.
 def update():
+    global CURRENT_SCENE
     if CURRENT_SCENE == 0:  # Menu
         start_game_button.update()
 
     elif CURRENT_SCENE == 1:  # Game
         car.update(dt, DISPLAY_SURFACE)
 
-        ui.update(car.get_speed(), dt, scene.get_timer_mod(), scene.lap_counter)
+        CURRENT_SCENE = ui.update(car.get_speed(), dt, scene.get_timer_mod(), scene.lap_counter, car.reset)
         ui.timer_is_stopped = scene.is_game_complete
 
         # Update the scene after the car.  Pass the checkpoint checker value to the ui.

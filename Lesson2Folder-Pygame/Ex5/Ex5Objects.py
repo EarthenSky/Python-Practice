@@ -7,6 +7,13 @@ is_a_key_down = False
 is_s_key_down = False
 is_d_key_down = False
 
+START_TIMER = False
+
+# Reset some variables.
+def reset_scene():
+    global START_TIMER
+    START_TIMER = False
+
 class scene:
     """The scene gets size then position in the constructor.
         Has a colour map (array) that holds what type of ground is at any single position, grass, pavement, or dirt. (for the car)"""
@@ -58,27 +65,28 @@ class scene:
     def get_timer_mod(self):
         out = self._timer_mod
         self._timer_mod = 0
-
         return out
 
     def update(self, car_pos, dt):
-        print str(dt)
+        #print str(dt)
 
+        # Stop Game
         if self.lap_counter > 2:
             self.is_game_complete = True
 
         if self._can_do_it == True:
             self._wait_timer += float(dt)
-            if self._wait_timer > 3:
-                self._can_do_it == False
+            if self._wait_timer > 1: # Wait a second.
+                self._can_do_it = False
 
         # Update the checkpoints and output if it is over the correct one.
         for val in self.checkpoints:
             if val.active(car_pos):
-                if self._checkpoints_to_hit.find( str(val.number) ) > 0:  # Case, checkpoint has not been hit yet this lap.
+                #print str( self._checkpoints_to_hit.find( str(val.number) ) )
+                if self._checkpoints_to_hit.find( str(val.number) ) >= 0:  # Case, checkpoint has not been hit yet this lap.
                     # Remove the checkpoint.
                     self._checkpoints_to_hit = self._checkpoints_to_hit.replace( str(val.number) , "")
-                    print str(val.number) + " v2"
+                    #print str(val.number) + " v2"
 
                     return str(val.number)
 
@@ -92,9 +100,10 @@ class scene:
 
                     self._checkpoints_to_hit = "1234"  # Reset checkpoints to hit.
 
-                    print str(val.number) + " v1"
+                    #print str(val.number) + " v1"
 
                     return str(val.number)
+        return ""
 
     # Draws the img of the racetrack.
     def draw(self, surface):
@@ -115,6 +124,7 @@ class car:
         # Constructor Variables.
         self._size = size
         self._pos = pos
+        self._INIT_POS = pos  # Const, do not edit.
 
         # "Static" Variables.
         self._speed = 0.0
@@ -124,9 +134,14 @@ class car:
         self._img = pygame.image.load("SimpleGreenCarTopView.png").convert_alpha()
         self._img = pygame.transform.scale(self._img, (self._size[0], self._size[1]))
 
-        # Convert the colour map into an array, to easily read pixel values.
+        # Load the car's colour map.
         self._colour_map = pygame.image.load("TrackColourMap.png")
-        self._colour_map_array = pygame.PixelArray(self._colour_map)
+
+    def reset(self):
+        self._pos = self._INIT_POS
+
+        self._speed = 0.0
+        self._angle = 90.0
 
     # Return the position.
     def get_position(self):
@@ -138,27 +153,32 @@ class car:
     # Standard wasd keypress up-down handling.
     def check_input(self, event):
         global is_w_key_down, is_a_key_down, is_s_key_down, is_d_key_down
+        global START_TIMER
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 is_w_key_down = True
+                START_TIMER = True
                 return True
             elif event.key == pygame.K_LEFT:
                 is_a_key_down = True
                 return True
             elif event.key == pygame.K_DOWN:
                 is_s_key_down = True
+                START_TIMER = True
                 return True
             elif event.key == pygame.K_RIGHT:
                 is_d_key_down = True
                 return True
             elif event.key == pygame.K_w:
                 is_w_key_down = True
+                START_TIMER = True
                 return True
             elif event.key == pygame.K_a:
                 is_a_key_down = True
                 return True
             elif event.key == pygame.K_s:
                 is_s_key_down = True
+                START_TIMER = True
                 return True
             elif event.key == pygame.K_d:
                 is_d_key_down = True
@@ -424,22 +444,39 @@ class ui:
         self._lap_font = pygame.font.SysFont("monospace", 64)
         self._lap_text = self._lap_font.render(str(0), 1, (255, 255, 255))
 
+    def reset(self):
+        self._timer_value = 0
+        self.timer_is_stopped = False
+
     # Draws the img of the checkpoint.
-    def update(self, car_speed, dt, timer_mod, current_lap):
+    def update(self, car_speed, dt, timer_mod, current_lap, car_reset):
+        global START_TIMER  # Remember global
         # Update speed text.
         self._speed_text = self._speed_font.render("Speed: {} km/h".format( int(car_speed/4) ), 1, (255, 255, 255))
 
         # Update the timer's time value. (by the time the last frame took [dt or delta_time])
-        if self.timer_is_stopped == False:
-            self._timer_value += dt
+        if self.timer_is_stopped == False and START_TIMER == True:
+            self._timer_value += dt + timer_mod
             self._timer_text = self._timer_font.render("Timer: {}:{}s".format( int(self._timer_value/60), float(int((self._timer_value%60.0)*100.0))/100.0 ), 1, (255, 255, 255))
+        elif self.timer_is_stopped == True and START_TIMER == True:
+
+            # Write the time to a file.
+            with open("scores.errerr.7bxnlk.jp.win85", "a") as out_file:
+                out_file.write( "Time: {}:{}s \n\r".format( int(self._timer_value/60), float(int((self._timer_value%60.0)*100.0))/100.0 ) )
+
+            # Go to the menu scene and reset the old one.
+            self.reset()
+            car_reset()
+            reset_scene()
+            return 0
 
         # Update the lap counter.
-        self._lap_text = self._lap_font.render(str(current_lap), 1, (255, 255, 255))
+        self._lap_text = self._lap_font.render( "Lap: " + str(current_lap), 1, (255, 255, 255))
+        return 1
 
     # Sets the checkpoints.
     def set_checkpoints(self, str_checkpoints):
-        self._checkpoints = str_checkpoints
+        self._checkpoints += str_checkpoints
         self._checkpoint_text = self._checkpoint_font.render(self._checkpoints, 1, (255, 255, 255))
 
     # Draws the ui to the screen, not the camera.
@@ -450,7 +487,8 @@ class ui:
         surface.blit(self._lap_text, (16, 256 + 128))
 
 class button:
-    """This is a button class.  It calls a function when pressed.  Uses the default font for text."""
+    """This is a button class.  It calls a function when pressed.  Uses the default font for text.
+        Text is centered, yay!"""
 
     def __init__(self, pos, size, pressed, text, operands=None):
         # Init the position and size.
@@ -484,6 +522,7 @@ class button:
     def draw(self, surface):
         pygame.draw.rect(surface, (100, 100, 100), (self._pos[0], self._pos[1], self._size[0], self._size[1]), 0)
 
-        # Draw the text to the string.
+        # Draw the text to the screen.
+        size = self._font.size(self._text_string)
         text = self._font.render(self._text_string, 1, (255, 255, 255))
-        surface.blit(text, (self._pos[0], self._pos[1] + self._size[1]/2 - 48/2))
+        surface.blit(text, (self._pos[0] - (size[0] - self._size[0]) / 2, self._pos[1] + self._size[1]/2 - 48/2))
