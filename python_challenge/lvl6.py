@@ -1,6 +1,6 @@
 next_nothing = 90052
 
-total = 0
+total = ""
 
 txt = "N"
 
@@ -17,12 +17,12 @@ while txt[0] == 'N':
         fileObject = open("channel/{}.txt".format(next_nothing),'r')
         txt = fileObject.read()
 
-        total += int(next_nothing)
+        total += str(next_nothing)
 
         the_list = txt.split(" ")
         next_nothing = the_list[len(the_list)-1]
 
-        _list.append( ( int(old_nothing)/100, int(next_nothing)/100 ) )
+        _list.append( int(old_nothing) )
 
     except:
         print txt
@@ -31,7 +31,18 @@ while txt[0] == 'N':
     #if txt[0] == 'N':
     print txt + "|" + str(old_nothing) + " -> " + str(next_nothing)
 
+print str(total)
+
+str_thing = str(total).replace("0", "a").replace("1", "b").replace("2", "c").replace("3", "d").replace("4", "e").replace("5", "f").replace("6", "g").replace("7", "h").replace("8", "i").replace("9", "j")
+print str(str_thing)
+'''
+out_chars = ""
+for num in _list:
+    out_chars += chr(num)
+'''
+
 print str(_list)
+
 '''
 #46145
 #46383190
