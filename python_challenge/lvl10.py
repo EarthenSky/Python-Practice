@@ -30,5 +30,6 @@ for i in range(30):
     next_num += str(count) + str(next_char)
 
     a.append(int(next_num))
+    print a
 
 print len(str(a[30]))

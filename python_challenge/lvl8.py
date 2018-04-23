@@ -12,7 +12,7 @@ import zlib, bz2
 decompressor = bz2.BZ2Decompressor()
 
 #print decompressor.decompress(g_un)
-print decompressor.decompress(g_p)
+print decompressor.decompress(g_un)
 #y = gzip.compress(b'0sfg^sdfgcoetohDabyss.')
 #print( y.split(b" ") )
 #x = gzip.decompress(g_p)

@@ -4,6 +4,7 @@ import ctypes
 pygame.init()
 pygame.mixer.pre_init(44000, -16, 2, 2048)  # Setup mixer to avoid sound lag.
 feet_steps_sound = pygame.mixer.Sound('slide.wav')  # Load sound effect.
+ded_sound = pygame.mixer.Sound('Die_Smash.wav')  # Load sound effect.
 
 # Constants
 GAME_FRICTION_COEFFICIENT = 0.99
@@ -140,6 +141,7 @@ class enemy:
 
         # If objects are too close, end game.
         if distance < (player_size[0] + self._size[0]) / 2 - 16:
+            ded_sound.play()
             message_string = u"YOU LOSE THE ENTIRE GAME!  D:"
             ctypes.windll.user32.MessageBoxW(0, message_string, u"SO VERY SAD!!!", 0)
 
