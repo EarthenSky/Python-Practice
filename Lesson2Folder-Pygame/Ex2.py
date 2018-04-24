@@ -43,6 +43,9 @@ def update():
     line_point_start[0] = (SCREEN_SIZE[0] / 2) + math.cos(math.radians(rotation)) * RADIUS
     line_point_start[1] = (SCREEN_SIZE[1] / 2) - math.sin(math.radians(rotation)) * RADIUS
 
+    #line_point_start[0] = line_point_start[0] * math.cos(math.radians(rotation)) - line_point_start[1] * math.sin(math.radians(rotation))
+    #line_point_start[1] = line_point_start[1] * math.cos(math.radians(rotation)) + line_point_start[0] * math.sin(math.radians(rotation))
+
     # The end point of the line is on the oposite side of the circle.
     line_point_end = [SCREEN_SIZE[0] - line_point_start[0], SCREEN_SIZE[1] - line_point_start[1]]
 
