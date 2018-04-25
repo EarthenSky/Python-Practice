@@ -1,0 +1,76 @@
+import pygame
+import camera3d
+
+# Constants
+SCREEN_SIZE = [1024, 768]
+FPS = 60
+
+# Starts and sets up pygame
+pygame.init()
+DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE)
+pygame.display.set_caption("3d camera test.")
+
+main_cam = camera3d.camera(100, SCREEN_SIZE)
+
+# Global Variables
+delta_time = 0
+game_stopped = False
+
+var = 0
+
+# A list of points, to draw a wireframe quad.
+pnt_list3d = [(80, 80, 80), (-10, 10, 10), (10, -10, 10), (-10, -10, 10)]
+
+# This function handles any input.  Called before update.
+def handle_input():
+    global game_stopped
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_stopped = True
+
+# This is for drawing stuff.  Called before update
+def draw():
+    global DISPLAY_SURFACE, main_cam
+
+    pnt_list2d = []
+    for pnt3d in pnt_list3d:
+        # Make the list use screen points instead of 2d ones.
+        pnt_list2d.append( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
+        print str( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
+
+    pygame.draw.polygon(DISPLAY_SURFACE, (250, 200, 150, 255), pnt_list2d, 0)
+
+# This is the "do game math" function.  Put any math or functional code here.
+def update():
+    global var
+
+    var += 1
+
+# This is the gameloop section of code.
+def gameloop():
+    global delta_time
+
+    # Create the object that handles framerate regulation and delta_time.
+    framerate_clock = pygame.time.Clock()
+    delta_time = framerate_clock.tick(FPS) / 1000.0
+
+    # This is the start of the gameloop.
+    while not game_stopped:
+        handle_input()  # First Gameloop Stage.
+
+        update()  # Second Gameloop Stage.
+
+        draw() # Last Gameloop Stage.
+
+        pygame.display.update() # Updates the display with changes.
+
+        # Pause pygame and calculate delta time.
+        delta_time = framerate_clock.tick(FPS) / 1000.0
+        #print "DEBUG: delta_time = " + str(delta_time)
+
+    # Close pygame before application closes.
+    pygame.quit()
+
+gameloop()  # This is pretty much the only instruction run in the global scope.
+
+print "DEBUG: Application Complete."

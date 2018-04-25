@@ -8,11 +8,11 @@ SCREEN_SIZE = [1024, 768]
 # Sets the prefered fps.  Mostly affects the speed of the main gameloop,
 # although complex calculations may cause the fps to drop.
 # Use delta_time to link movement to frame change speed.
-FPS = 150
+FPS = 3
 
 LINE_WIDTH = 5
 RADIUS = SCREEN_SIZE[1] / 2.1
-ROTATION_MOD = 1.674562  # How fast the thingy spins.
+ROTATION_MOD = 90  # How fast the thingy spins.
 
 # Delta time is set to the change in time after each frame.
 delta_time = 0
@@ -42,9 +42,6 @@ def update():
     # the hypotensue of a right triangle with a theta of rotation degrees.
     line_point_start[0] = (SCREEN_SIZE[0] / 2) + math.cos(math.radians(rotation)) * RADIUS
     line_point_start[1] = (SCREEN_SIZE[1] / 2) - math.sin(math.radians(rotation)) * RADIUS
-
-    #line_point_start[0] = line_point_start[0] * math.cos(math.radians(rotation)) - line_point_start[1] * math.sin(math.radians(rotation))
-    #line_point_start[1] = line_point_start[1] * math.cos(math.radians(rotation)) + line_point_start[0] * math.sin(math.radians(rotation))
 
     # The end point of the line is on the oposite side of the circle.
     line_point_end = [SCREEN_SIZE[0] - line_point_start[0], SCREEN_SIZE[1] - line_point_start[1]]
