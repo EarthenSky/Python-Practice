@@ -17,34 +17,71 @@ delta_time = 0
 game_stopped = False
 
 var = 0
+X = 0
+Y = 0
+Z = 0
 
 # A list of points, to draw a wireframe quad.
-pnt_list3d = [(80, 80, 80), (-10, 10, 10), (10, -10, 10), (-10, -10, 10)]
+pnt_list3d = [(40, 40, 10), (10, 40, 10), (10, 10, 10), (40, 10, 10)]
 
 # This function handles any input.  Called before update.
 def handle_input():
-    global game_stopped
+    global game_stopped, X, Y, Z
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game_stopped = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                X = 0.1
+                Y = 0
+                Z = 0
+            elif event.key == pygame.K_d:
+                X = -0.1
+                Y = 0
+                Z = 0
+            elif event.key == pygame.K_w:
+                X = 0
+                Y = 0.1
+                Z = 0
+            elif event.key == pygame.K_s:
+                X = 0
+                Y = -0.1
+                Z = 0
+            elif event.key == pygame.K_UP:
+                X = 0
+                Y = 0
+                Z = 0.1
+            elif event.key == pygame.K_DOWN:
+                X = 0
+                Y = 0
+                Z = -0.1
+            elif event.key == pygame.K_SPACE:
+                X = 0
+                Y = 0
+                Z = 0
+
 
 # This is for drawing stuff.  Called before update
 def draw():
     global DISPLAY_SURFACE, main_cam
 
+    DISPLAY_SURFACE.fill( (255, 255, 255, 255) )
+
     pnt_list2d = []
     for pnt3d in pnt_list3d:
         # Make the list use screen points instead of 2d ones.
         pnt_list2d.append( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
-        print str( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
+        #print str( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
 
-    pygame.draw.polygon(DISPLAY_SURFACE, (250, 200, 150, 255), pnt_list2d, 0)
+    pygame.draw.polygon(DISPLAY_SURFACE, (250, 200, 150, 255), pnt_list2d, 4)
 
 # This is the "do game math" function.  Put any math or functional code here.
 def update():
     global var
 
     var += 1
+
+    main_cam.translate( (X, Y, Z) )
 
 # This is the gameloop section of code.
 def gameloop():

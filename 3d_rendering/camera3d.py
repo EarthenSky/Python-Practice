@@ -2,11 +2,11 @@ import math
 
 # Max render distance.  I don't know what happens if you go over it.
 # Incremenmting it before runtime should be safe though.
-MAX_RENDER_DISTANCE = 2  # 100 000
+MAX_RENDER_DISTANCE = 100000  # 100 000
 
 def distance3d(pnt1, pnt2):
     """Find distance between two 3d points. pnt -> (x, y, z)"""
-    dif_pnt = ( abs(pnt1[0] - pnt2[0]), abs(pnt1[1] - pnt2[1]), abs(pnt1[2] - pnt2[2]) )
+    dif_pnt = ( pnt1[0] - pnt2[0], pnt1[1] - pnt2[1], pnt1[2] - pnt2[2] )
 
     # Find xy distance.
     xy_distance = math.sqrt( (dif_pnt[0] ** 2) + (dif_pnt[1] ** 2) )
@@ -16,7 +16,7 @@ def distance3d(pnt1, pnt2):
 
 # Find distance between two 2d points. pnt -> (x, y)
 def _distance2d(pnt1, pnt2):
-    dif_pnt = ( abs(pnt1[0] - pnt2[0]), abs(pnt1[1] - pnt2[1]) )
+    dif_pnt = ( pnt1[0] - pnt2[0], pnt1[1] - pnt2[1] )
 
     # Find xy distance.
     return math.sqrt( (dif_pnt[0] ** 2) + (dif_pnt[1] ** 2) )
@@ -33,6 +33,13 @@ def _three_point_angle(pnt1, pnt2, pnt3):
 
     # Do cosine law.
     return math.degrees( math.acos( form ) )
+
+def _2d_line_side(pnt_line1, pnt_line2, pnt):
+    d = (pnt[0] - pnt_line1[0]) * (pnt_line2[1] - pnt_line1[1]) - (pnt[1] - pnt_line1[1]) * (pnt_line2[0] - pnt_line1[0])
+    if d > 0:
+        return 1
+    else:
+        return -1
 
 class camera:
     """This class manages conversion between 3d and 2d points.  This camera can be rotated."""
@@ -51,7 +58,9 @@ class camera:
         fov_range_distance = float(circumfrence) * float(fov_angle)/360
 
         # Find the angle between the point and the edge fo the fov.
-        edge_angle = (fov_angle/2) - _three_point_angle(start_pnt2d, cam_pnt2d, anchor_pnt2d)
+        edge_angle = ( (fov_angle/2) - _three_point_angle(start_pnt2d, cam_pnt2d, anchor_pnt2d) ) * -_2d_line_side(cam_pnt2d, anchor_pnt2d, start_pnt2d)
+
+        #print (edge_angle)
 
         # Find distance to the side of the screen.
         edge_range_distance = circumfrence * (edge_angle/360)
@@ -61,17 +70,21 @@ class camera:
 
     # Converts (x, y, z) to (x, y) but as a screen position.
     def convertToScreenPoint(self, point3d, screen_size):
-        circumfrence = 3.14159265 * distance3d(self._pos3d, point3d) ** 2  #TODO: only need distance 2d, not 3d.  I think.
+        circumfrence_x = 3.14159265 * _distance2d( (self._pos3d[0], self._pos3d[2]), (point3d[0], point3d[2]) ) ** 2  #TODO: only need distance 2d, not 3d.  I think.
+        circumfrence_y = 3.14159265 * _distance2d( (self._pos3d[1], self._pos3d[2]), (point3d[1], point3d[2]) ) ** 2  #TODO: only need distance 2d, not 3d.  I think.
 
         # Find the xy screen positions.
-        pixel_pos_x = self._findPixelPos( circumfrence, self._fov[0], screen_size[0], (point3d[0], point3d[2]), (self._pos3d[0], self._pos3d[2]),  (self._anchor3d[0], self._anchor3d[2]) )
-        pixel_pos_y = self._findPixelPos( circumfrence, self._fov[1], screen_size[1], (point3d[1], point3d[2]), (self._pos3d[1], self._pos3d[2]),  (self._anchor3d[1], self._anchor3d[2]) )
+        pixel_pos_x = self._findPixelPos( circumfrence_x, self._fov[0], screen_size[0], (point3d[0], point3d[2]), (self._pos3d[0], self._pos3d[2]),  (self._anchor3d[0], self._anchor3d[2]) )
+        pixel_pos_y = self._findPixelPos( circumfrence_y, self._fov[1], screen_size[1], (point3d[1], point3d[2]), (self._pos3d[1], self._pos3d[2]),  (self._anchor3d[1], self._anchor3d[2]) )
 
+        #print(pixel_pos_x)
+        #print(pixel_pos_y)
+        #print("|")
         # Return the x, then y screen positions.
-        return (pixel_pos_x, pixel_pos_y)
+        return (pixel_pos_x/2, pixel_pos_y/2)
 
     # Rotates the camera by the x, y, then z.  degrees3d -> (x_rot, y_rot, z_rot)
-    def rotate(degrees3d):
+    def rotate(self, degrees3d):
         # Around the x axis, x stays the same.  z and y change.
         if degrees3d[0] != 0:
             zy_extension = _distance2d( (self._pos3d[2], self._pos3d[1]), (self._anchor3d[2], self._anchor3d[1]) )
@@ -94,7 +107,7 @@ class camera:
             self._anchor3d = (x_rot, y_rot, self._anchor3d[2])
 
     # Moves (translates) the position by a point3d.
-    def translate(point3d):
+    def translate(self, point3d):
         self._pos3d = (self._pos3d[0] + point3d[0], self._pos3d[1] + point3d[1], self._pos3d[2] + point3d[2])
         self._anchor3d = (self._anchor3d[0] + point3d[0], self._anchor3d[1] + point3d[1], self._anchor3d[2] + point3d[2])
 
