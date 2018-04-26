@@ -109,6 +109,23 @@ class camera:
         # Return the x, then y screen positions.
         return (pixel_pos_x, pixel_pos_y)
 
+    def convertToScreenPointAngleMethod(self, poind3d, screen_size):
+        circumfrence_x = 3.14159265 * _distance2d( (self._pos3d[0], self._pos3d[2]), (point3d[0], point3d[2]) ) ** 2  #TODO: only need distance 2d, not 3d.  I think.  IS THIS GOOD NOW? OK?
+        circumfrence_y = 3.14159265 * _distance2d( (self._pos3d[1], self._pos3d[2]), (point3d[1], point3d[2]) ) ** 2  #TODO: only need distance 2d, not 3d.  I think.  IS THIS OK NOW? GOOD?
+
+        pnt_c = (0, 0)  # Set this to something
+
+        # Find the angle between the point and the edge of the fov.
+        temp = _2d_line_side(cam_pnt2d, anchor_pnt2d, start_pnt2d)
+        temp2 = _three_point_angle(start_pnt2d, cam_pnt2d, anchor_pnt2d)
+        edge_angle = ( (fov_angle/2) - temp2 ) + (temp2 * temp)
+
+        # Find distance to the side of the screen.
+        edge_range_distance = circumfrence * (edge_angle/360)
+
+        # Scale distance to the pixel value.
+        return (edge_range_distance/fov_range_distance) * screen_distance
+
     # Rotates the camera by the x, y, then z.  degrees3d -> (x_rot, y_rot, z_rot)
     def rotate(self, degrees3d):
         # Around the x axis, x stays the same.  z and y change.

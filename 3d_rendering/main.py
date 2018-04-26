@@ -10,7 +10,7 @@ pygame.init()
 DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE)
 pygame.display.set_caption("3d camera test.")
 
-main_cam = camera3d.camera(50, SCREEN_SIZE)
+main_cam = camera3d.camera(110, SCREEN_SIZE)
 
 # Global Variables
 delta_time = 0
