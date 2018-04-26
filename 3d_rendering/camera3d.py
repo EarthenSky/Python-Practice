@@ -1,7 +1,9 @@
 import math
 
 '''Important Note:  Try not to keep the rotation value getting larger and larger, that
-might be bad...  Just try not to do that ok?  Set it back to 0 instead of 360; thanks.'''
+might be bad...  Just try not to do that ok?  Set it back to 0 instead of 360; thanks.
+I just realized that > 360 degrees makes the arccos input go above abs(1) ... so that's bad.
+Don't do it.'''
 
 # Max render distance.  I don't know what happens if you go over it.
 # Incremenmting it before runtime should be safe though.
@@ -110,21 +112,32 @@ class camera:
         return (pixel_pos_x, pixel_pos_y)
 
     def convertToScreenPointAngleMethod(self, poind3d, screen_size):
-        circumfrence_x = 3.14159265 * _distance2d( (self._pos3d[0], self._pos3d[2]), (point3d[0], point3d[2]) ) ** 2  #TODO: only need distance 2d, not 3d.  I think.  IS THIS GOOD NOW? OK?
-        circumfrence_y = 3.14159265 * _distance2d( (self._pos3d[1], self._pos3d[2]), (point3d[1], point3d[2]) ) ** 2  #TODO: only need distance 2d, not 3d.  I think.  IS THIS OK NOW? GOOD?
+        # X pixel -------------------------------------------------- (uses X and Z)
 
-        pnt_c = (0, 0)  # Set this to something
+        # The radius is the distance between the point and the camera.
+        radius = _distance2d( (self._pos3d[0], self._pos3d[2]), (point3d[0], point3d[2]) )
 
-        # Find the angle between the point and the edge of the fov.
-        temp = _2d_line_side(cam_pnt2d, anchor_pnt2d, start_pnt2d)
-        temp2 = _three_point_angle(start_pnt2d, cam_pnt2d, anchor_pnt2d)
-        edge_angle = ( (fov_angle/2) - temp2 ) + (temp2 * temp)
+        # Calculate the circumfrence fo no reason
+        #circumfrence_x = 3.14159265 * radius ** 2
 
-        # Find distance to the side of the screen.
-        edge_range_distance = circumfrence * (edge_angle/360)
+        corner_point = (self._pos3d[0], poind3d[2])  # This point is (x, z)
+
+        # Find the angle.
+        angle = math.acos( _distance2d(corner_point[0], corner_point[1], (self._pos3d[0], self._pos3d[2])) / radius )
+
+        # Find the angle distance from the side.
+        new_angle = (self._fov[0] / 2) - angle
+
+        # SOmething ...
+        ratio = self._fov[0] / new_angle
 
         # Scale distance to the pixel value.
-        return (edge_range_distance/fov_range_distance) * screen_distance
+        x_pixel_pos = (screen_size[0] * ratio) * screen_distance
+
+        # Y pixel --------------------------------------------------
+
+        # Output ---------------------------------------------------
+        return (x_pixel_pos, y_pixel_pos)
 
     # Rotates the camera by the x, y, then z.  degrees3d -> (x_rot, y_rot, z_rot)
     def rotate(self, degrees3d):
