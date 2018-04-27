@@ -111,33 +111,70 @@ class camera:
         # Return the x, then y screen positions.
         return (pixel_pos_x, pixel_pos_y)
 
-    def convertToScreenPointAngleMethod(self, poind3d, screen_size):
+    def convertToScreenPointAngleMethod(self, point3d, screen_size):
         # X pixel -------------------------------------------------- (uses X and Z)
 
         # The radius is the distance between the point and the camera.
         radius = _distance2d( (self._pos3d[0], self._pos3d[2]), (point3d[0], point3d[2]) )
 
-        # Calculate the circumfrence fo no reason
-        #circumfrence_x = 3.14159265 * radius ** 2
+        corner_point = (self._pos3d[0], point3d[2])  # This point is (x, z)
 
-        corner_point = (self._pos3d[0], poind3d[2])  # This point is (x, z)
+        # Find the angle from the side of the field of view.
+        x_angle = (self._fov[0] / 2) - math.acos( _distance2d( (corner_point[0], corner_point[1]), (self._pos3d[0], self._pos3d[2]) ) / radius )
 
-        # Find the angle.
-        angle = math.acos( _distance2d(corner_point[0], corner_point[1], (self._pos3d[0], self._pos3d[2])) / radius )
+        print (point3d[0], '>', self._pos3d[0])
 
-        # Find the angle distance from the side.
-        new_angle = (self._fov[0] / 2) - angle
+        # If the vertex point is to the right of the main point fix the rotation value.
+        if point3d[0] > self._pos3d[0]:
+            x_angle = self._fov[0] - x_angle
 
-        # SOmething ...
-        ratio = self._fov[0] / new_angle
+            # If the point is behind the head, and to the right, fix rotation, again.
+            if point3d[2] < self._pos3d[2]:
+                x_angle = 180 - ( x_angle - self._fov[0] )
+        else:
+            # If the point is behind the head, and to the left, fix rotation
+            if point3d[2] < self._pos3d[2]:
+                x_angle = -(90 - (self._fov[0] / 2) + x_angle)
 
-        # Scale distance to the pixel value.
-        x_pixel_pos = (screen_size[0] * ratio) * screen_distance
+        # Finds the ratio between the two angles
+        ratio = self._fov[0] / x_angle
+
+        # Scale the ratio to the screen_size, yielding the pixel position.
+        x_pixel_pos = screen_size[0] * ratio
 
         # Y pixel --------------------------------------------------
 
+        radius = _distance2d( (self._pos3d[1], self._pos3d[2]), (point3d[1], point3d[2]) )
+
+        corner_point = (self._pos3d[1], point3d[2])  # This point is (x, z)
+
+        # Find the angle from the side of the field of view.
+        y_angle = (self._fov[1] / 2) - math.acos( _distance2d( (corner_point[0], corner_point[1]), (self._pos3d[1], self._pos3d[2]) ) / radius )
+
+        print (point3d[1], '>', self._pos3d[1])
+
+        # If the vertex point is to the right of the main point fix the rotation value.
+        if point3d[1] > self._pos3d[1]:
+            y_angle = self._fov[1] - y_angle
+
+            # If the point is behind the head, and to the right, fix rotation, again.
+            if point3d[2] < self._pos3d[2]:
+                y_angle = 180 - ( x_angle - self._fov[0] )
+        else:
+            # If the point is behind the head, and to the left, fix rotation
+            if point3d[2] < self._pos3d[2]:
+                y_angle = -(90 - (self._fov[0] / 2) + y_angle)
+
+        # Finds the ratio between the two angles
+        ratio = self._fov[1] / y_angle
+
+        # Scale the ratio to the screen_size, yielding the pixel position.
+        y_pixel_pos = screen_size[1] * ratio
+
         # Output ---------------------------------------------------
-        return (x_pixel_pos, y_pixel_pos)
+
+        print "----------------"
+        return (x_pixel_pos - screen_size[0], y_pixel_pos - screen_size[1])
 
     # Rotates the camera by the x, y, then z.  degrees3d -> (x_rot, y_rot, z_rot)
     def rotate(self, degrees3d):
@@ -164,6 +201,9 @@ class camera:
 
         # Change the rotation variable.
         self._rotation_degrees3d = (self._rotation_degrees3d[0] + degrees3d[0], self._rotation_degrees3d[1] + degrees3d[0], self._rotation_degrees3d[2] + degrees3d[0])
+
+    def rotate2d(self, degrees3d):
+        pass  # Do rotation angle mod shit.
 
     # Gets two points rotated back to the start, equally.
     def _get_rotated_back(self, pnt3d1, pnt3d2):

@@ -3,7 +3,7 @@ import camera3d
 
 # Constants
 SCREEN_SIZE = [1024, 768]
-FPS = 120
+FPS = 15
 
 # Starts and sets up pygame
 pygame.init()
@@ -16,7 +16,7 @@ main_cam = camera3d.camera(110, SCREEN_SIZE)
 delta_time = 0
 game_stopped = False
 
-var = 0
+# DEBUG: globals.
 X = 0
 Y = 0
 Z = 0
@@ -24,10 +24,10 @@ Z = 0
 Rot = 0
 
 # A list of points, to draw a wireframe quad.
-pnt_list3d = [(40*2 - 50, 40*2 - 50, 200), (10*2 - 50, 40*2 - 50, 200), (10*2 - 50, 10*2 - 50, 200), (40*2 - 50, 10*2 - 50, 200)]
+pnt_list3d = [(40, 40, 100), (10, 40, 100), (10, 10, 100), (40, 10, 100)]
 
 # A list of points, to draw a wireframe quad.
-pnt_list3d2 = [(40*2 - 50, 40*2 - 50, 400), (10*2 - 50, 40*2 - 50, 400), (10*2 - 50, 10*2 - 50, 400), (40*2 - 50, 10*2 - 50, 400)]
+pnt_list3d2 = [(40, 40, 200), (10, 40, 200), (10, 10, 200), (40, 10, 200)]
 
 # This function handles any input.  Called before update.
 def handle_input():
@@ -80,7 +80,7 @@ def draw():
     pnt_list2d = []
     for pnt3d in pnt_list3d2:
         # Make the list use screen points instead of 2d ones.
-        pnt_list2d.append( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
+        pnt_list2d.append( main_cam.convertToScreenPointAngleMethod(pnt3d, SCREEN_SIZE) )
         #print str( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
 
     pygame.draw.polygon(DISPLAY_SURFACE, (100, 200, 250, 255), pnt_list2d, 0)
@@ -88,17 +88,13 @@ def draw():
     pnt_list2d = []
     for pnt3d in pnt_list3d:
         # Make the list use screen points instead of 2d ones.
-        pnt_list2d.append( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
+        pnt_list2d.append( main_cam.convertToScreenPointAngleMethod(pnt3d, SCREEN_SIZE) )
         #print str( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
 
     pygame.draw.polygon(DISPLAY_SURFACE, (250, 200, 150, 255), pnt_list2d, 0)
 
 # This is the "do game math" function.  Put any math or functional code here.
 def update():
-    global var
-
-    var += 1
-
     main_cam.translate( (X, Y, Z) )
 
 # This is the gameloop section of code.
