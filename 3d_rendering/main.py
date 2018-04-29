@@ -3,14 +3,14 @@ import camera3d
 
 # Constants
 SCREEN_SIZE = [1024, 768]
-FPS = 15
+FPS = 120
 
 # Starts and sets up pygame
 pygame.init()
 DISPLAY_SURFACE = pygame.display.set_mode(SCREEN_SIZE)
 pygame.display.set_caption("3d camera test.")
 
-main_cam = camera3d.camera(110, SCREEN_SIZE)
+main_cam = camera3d.camera(100, SCREEN_SIZE)
 
 # Global Variables
 delta_time = 0
@@ -24,10 +24,10 @@ Z = 0
 Rot = 0
 
 # A list of points, to draw a wireframe quad.
-pnt_list3d = [(40, 40, 100), (10, 40, 100), (10, 10, 100), (40, 10, 100)]
+pnt_list3d = [(-1, -1, 3), (1, -1, 3), (1, 1, 3), (-1, 1, 3)]
 
 # A list of points, to draw a wireframe quad.
-pnt_list3d2 = [(40, 40, 200), (10, 40, 200), (10, 10, 200), (40, 10, 200)]
+pnt_list3d2 = [(-2, -2, 5), (2, -2, 5), (2, 2, 5), (-2, 2, 5)]
 
 # This function handles any input.  Called before update.
 def handle_input():
@@ -95,7 +95,7 @@ def draw():
 
 # This is the "do game math" function.  Put any math or functional code here.
 def update():
-    main_cam.translate( (X, Y, Z) )
+    main_cam.translate( (-X/100.0, -Y/100.0, Z/100.0) )
 
 # This is the gameloop section of code.
 def gameloop():

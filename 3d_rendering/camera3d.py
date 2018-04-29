@@ -120,9 +120,7 @@ class camera:
         corner_point = (self._pos3d[0], point3d[2])  # This point is (x, z)
 
         # Find the angle from the side of the field of view.
-        x_angle = (self._fov[0] / 2) - math.acos( _distance2d( (corner_point[0], corner_point[1]), (self._pos3d[0], self._pos3d[2]) ) / radius )
-
-        print (point3d[0], '>', self._pos3d[0])
+        x_angle = (self._fov[0] / 2) - math.degrees( math.acos( _distance2d( (corner_point[0], corner_point[1]), (self._pos3d[0], self._pos3d[2]) ) / radius ) )
 
         # If the vertex point is to the right of the main point fix the rotation value.
         if point3d[0] > self._pos3d[0]:
@@ -137,7 +135,9 @@ class camera:
                 x_angle = -(90 - (self._fov[0] / 2) + x_angle)
 
         # Finds the ratio between the two angles
-        ratio = self._fov[0] / x_angle
+        ratio = x_angle / self._fov[0]
+
+        print (ratio)
 
         # Scale the ratio to the screen_size, yielding the pixel position.
         x_pixel_pos = screen_size[0] * ratio
@@ -149,9 +149,7 @@ class camera:
         corner_point = (self._pos3d[1], point3d[2])  # This point is (x, z)
 
         # Find the angle from the side of the field of view.
-        y_angle = (self._fov[1] / 2) - math.acos( _distance2d( (corner_point[0], corner_point[1]), (self._pos3d[1], self._pos3d[2]) ) / radius )
-
-        print (point3d[1], '>', self._pos3d[1])
+        y_angle = (self._fov[1] / 2) - math.degrees( math.acos( _distance2d( (corner_point[0], corner_point[1]), (self._pos3d[1], self._pos3d[2]) ) / radius ) )
 
         # If the vertex point is to the right of the main point fix the rotation value.
         if point3d[1] > self._pos3d[1]:
@@ -159,14 +157,14 @@ class camera:
 
             # If the point is behind the head, and to the right, fix rotation, again.
             if point3d[2] < self._pos3d[2]:
-                y_angle = 180 - ( x_angle - self._fov[0] )
+                y_angle = 180 - ( y_angle - self._fov[1] )
         else:
             # If the point is behind the head, and to the left, fix rotation
             if point3d[2] < self._pos3d[2]:
-                y_angle = -(90 - (self._fov[0] / 2) + y_angle)
+                y_angle = -(90 - (self._fov[1] / 2) + y_angle)
 
         # Finds the ratio between the two angles
-        ratio = self._fov[1] / y_angle
+        ratio = y_angle / self._fov[1]
 
         # Scale the ratio to the screen_size, yielding the pixel position.
         y_pixel_pos = screen_size[1] * ratio
@@ -174,7 +172,7 @@ class camera:
         # Output ---------------------------------------------------
 
         print "----------------"
-        return (x_pixel_pos - screen_size[0], y_pixel_pos - screen_size[1])
+        return (x_pixel_pos, y_pixel_pos)
 
     # Rotates the camera by the x, y, then z.  degrees3d -> (x_rot, y_rot, z_rot)
     def rotate(self, degrees3d):
