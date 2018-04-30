@@ -80,7 +80,7 @@ def draw():
     pnt_list2d = []
     for pnt3d in pnt_list3d2:
         # Make the list use screen points instead of 2d ones.
-        pnt_list2d.append( main_cam.convertToScreenPointAngleMethod(pnt3d, SCREEN_SIZE) )
+        pnt_list2d.append( main_cam.to_screen_point_straight_angle_method(pnt3d, SCREEN_SIZE) )
         #print str( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
 
     pygame.draw.polygon(DISPLAY_SURFACE, (100, 200, 250, 255), pnt_list2d, 0)
@@ -88,14 +88,14 @@ def draw():
     pnt_list2d = []
     for pnt3d in pnt_list3d:
         # Make the list use screen points instead of 2d ones.
-        pnt_list2d.append( main_cam.convertToScreenPointAngleMethod(pnt3d, SCREEN_SIZE) )
+        pnt_list2d.append( main_cam.to_screen_point_straight_angle_method(pnt3d, SCREEN_SIZE) )
         #print str( main_cam.convertToScreenPoint(pnt3d, SCREEN_SIZE) )
 
     pygame.draw.polygon(DISPLAY_SURFACE, (250, 200, 150, 255), pnt_list2d, 0)
 
 # This is the "do game math" function.  Put any math or functional code here.
 def update():
-    main_cam.translate( (-X/100.0, -Y/100.0, Z/100.0) )
+    main_cam.translate( (-X/10.0, -Y/10.0, Z/10.0) )
 
 # This is the gameloop section of code.
 def gameloop():

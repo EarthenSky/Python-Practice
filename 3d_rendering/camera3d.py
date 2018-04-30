@@ -45,12 +45,13 @@ def _three_point_angle(pnt1, pnt2, pnt3):
     # Do cosine law.
     return math.degrees( math.acos( form ) )
 
+# Find what side of a line a 2d point is on.
 def _2d_line_side(pnt_line1, pnt_line2, pnt):
     d = (pnt[0] - pnt_line1[0]) * (pnt_line2[1] - pnt_line1[1]) - (pnt[1] - pnt_line1[1]) * (pnt_line2[0] - pnt_line1[0])
     if d > 0:
         return 0
     else:
-        return 2
+        return 1
 
 class camera:
     """This class manages conversion between 3d and 2d points.  This camera can be rotated."""
@@ -171,6 +172,63 @@ class camera:
 
         # Output ---------------------------------------------------
 
+        print "----------------"
+        return (x_pixel_pos, y_pixel_pos)
+
+    def to_screen_point_straight_angle_method(self, point3d, screen_size):
+        # Pre ------------------------------------------------------ (only z)
+
+        # If the point is behind the head, tag it for line rendering and tri rendering.
+        if point3d[2] < self._pos3d[2]:
+            pass
+
+        # X pixel -------------------------------------------------- (uses x and z)
+
+        corner_point = (self._pos3d[0], point3d[2])  # This point is (x, z)
+
+        # Find the size of the fov when scaled to the point.  (fov_size is aka "d")
+        fov_size = math.tan(math.radians(self._fov[0]/2)) * _distance2d(corner_point, (self._pos3d[0], self._pos3d[2]))
+
+        # The distance from the side of the fov.
+        offset_value = (self._fov[0]/2) - _distance2d(corner_point, (point3d[0], point3d[2]))
+
+        # If the vertex point is to the right of the main point fix the offset value.
+        if point3d[0] > self._pos3d[0]:
+            offset_value = fov_size - offset_value
+
+        # TODO: MODIFY THE OFFSET VALUE WITH THE ROTATION VALUE.
+
+        # The ratio between the distance from the side of the fov and the fov_size, used to calculate the x_pixel_pos.
+        scale_ratio = offset_value / fov_size
+
+        # Calculates the x position of the point, converted to pixels.
+        x_pixel_pos = screen_size[0] * scale_ratio
+
+        # Y pixel -------------------------------------------------- (uses y and z)
+
+        corner_point = (self._pos3d[1], point3d[2])  # This point is (x, z)
+
+        # Find the size of the fov when scaled to the point.  (fov_size is aka "d")
+        fov_size = math.tan(math.radians(self._fov[1]/2)) * _distance2d(corner_point, (self._pos3d[1], self._pos3d[2]))
+
+        # The distance from the side of the fov.
+        offset_value = (self._fov[1]/2) - _distance2d(corner_point, (point3d[1], point3d[2]))
+
+        # If the vertex point is to the right of the main point fix the offset value.
+        if point3d[1] > self._pos3d[1]:
+            offset_value = fov_size - offset_value
+
+        # TODO: MODIFY THE OFFSET VALUE WITH THE ROTATION VALUE.
+
+        # The ratio between the distance from the side of the fov and the fov_size, used to calculate the x_pixel_pos.
+        scale_ratio = offset_value / fov_size
+
+        # Calculates the x position of the point, converted to pixels.
+        y_pixel_pos = screen_size[1] * scale_ratio
+
+        # Output ---------------------------------------------------
+
+        #print (x_pixel_pos, y_pixel_pos)
         print "----------------"
         return (x_pixel_pos, y_pixel_pos)
 
