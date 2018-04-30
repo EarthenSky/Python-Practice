@@ -5,10 +5,6 @@ might be bad...  Just try not to do that ok?  Set it back to 0 instead of 360; t
 I just realized that > 360 degrees makes the arccos input go above abs(1) ... so that's bad.
 Don't do it.'''
 
-# Max render distance.  I don't know what happens if you go over it.
-# Incremenmting it before runtime should be safe though.
-MAX_RENDER_DISTANCE = 100000  # 100 000
-
 def distance3d(pnt1, pnt2):
     """Find distance between two 3d points. pnt -> (x, y, z)"""
     dif_pnt = ( pnt1[0] - pnt2[0], pnt1[1] - pnt2[1], pnt1[2] - pnt2[2] )
@@ -62,55 +58,7 @@ class camera:
         self._fov = (fov, fov/(float(self._screen_size[0])/self._screen_size[1]))  # (horizontal fov, verticle fov)
 
         self._pos3d = (0, 0, 0)  # xyz
-        self._anchor3d = (0, 0, MAX_RENDER_DISTANCE)  # Direction point.
         self._rotation_degrees3d = (0, 0, 0)
-
-    # is_find_x is a boolean value.  start_pnt2d is (x, z) or (y, z)
-    def _findPixelPos(self, circumfrence, fov_angle, screen_distance, start_pnt2d, cam_pnt2d, anchor_pnt2d):
-        #print(start_pnt2d, cam_pnt2d, anchor_pnt2d)
-        #print("-------------------------------------")
-
-        # Find the perimeter of the fov cone.
-        fov_range_distance = float(circumfrence) * float(fov_angle)/360
-
-        #print(fov_range_distance)
-
-        # Find the angle between the point and the edge of the fov.
-        temp = _2d_line_side(cam_pnt2d, anchor_pnt2d, start_pnt2d)
-        temp2 = _three_point_angle(start_pnt2d, cam_pnt2d, anchor_pnt2d)
-
-        edge_angle = ( (fov_angle/2) - temp2 ) + (temp2 * temp)
-
-        #print(edge_angle, temp)
-
-        # Find distance to the side of the screen.
-        edge_range_distance = circumfrence * (edge_angle/360)
-
-        #print str(edge_range_distance/fov_range_distance)
-
-        # Scale distance to the pixel value.
-        return (edge_range_distance/fov_range_distance) * screen_distance
-
-    # Converts (x, y, z) to (x, y) but as a screen position.
-    def convertToScreenPoint(self, point3d, screen_size):
-        circumfrence_x = 3.14159265 * _distance2d( (self._pos3d[0], self._pos3d[2]), (point3d[0], point3d[2]) ) ** 2  #TODO: only need distance 2d, not 3d.  I think.  IS THIS GOOD NOW? OK?
-        circumfrence_y = 3.14159265 * _distance2d( (self._pos3d[1], self._pos3d[2]), (point3d[1], point3d[2]) ) ** 2  #TODO: only need distance 2d, not 3d.  I think.  IS THIS OK NOW? GOOD?
-
-        # Rotate the points so they are flush with the z axis and numbers are constant.
-        #new_anchor, new_point3d = self._get_rotated_back(self._anchor3d, point3d)  # TODO: dont need to rotate the anchor every time.
-        new_anchor = self._anchor3d
-        new_point3d = point3d
-
-        # Find the x, y screen positions.
-        pixel_pos_x = self._findPixelPos( circumfrence_x, self._fov[0], screen_size[0], (new_point3d[0], new_point3d[2]), (self._pos3d[0], self._pos3d[2]),  (new_anchor[0], new_anchor[2]) )
-        pixel_pos_y = self._findPixelPos( circumfrence_y, self._fov[1], screen_size[1], (new_point3d[1], new_point3d[2]), (self._pos3d[1], self._pos3d[2]),  (new_anchor[1], new_anchor[2]) )
-
-        print(pixel_pos_x, pixel_pos_y)
-        print(self._pos3d)
-        print("-----------------------")
-
-        # Return the x, then y screen positions.
-        return (pixel_pos_x, pixel_pos_y)
 
     def convertToScreenPointAngleMethod(self, point3d, screen_size):
         # X pixel -------------------------------------------------- (uses X and Z)
