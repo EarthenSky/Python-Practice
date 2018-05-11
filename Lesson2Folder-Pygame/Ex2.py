@@ -8,11 +8,11 @@ SCREEN_SIZE = [1024, 768]
 # Sets the prefered fps.  Mostly affects the speed of the main gameloop,
 # although complex calculations may cause the fps to drop.
 # Use delta_time to link movement to frame change speed.
-FPS = 3
+FPS = 90
 
 LINE_WIDTH = 5
 RADIUS = SCREEN_SIZE[1] / 2.1
-ROTATION_MOD = 90  # How fast the thingy spins.
+ROTATION_MOD = 9.03  # How fast the thingy spins.
 
 # Delta time is set to the change in time after each frame.
 delta_time = 0
