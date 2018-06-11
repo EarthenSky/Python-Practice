@@ -254,7 +254,7 @@ class camera:
     # Moves (translates) the position by a point3d.
     def translate(self, point3d):
         self._pos3d = (self._pos3d[0] + point3d[0], self._pos3d[1] + point3d[1], self._pos3d[2] + point3d[2])
-        self._anchor3d = (self._anchor3d[0] + point3d[0], self._anchor3d[1] + point3d[1], self._anchor3d[2] + point3d[2])
+        #self._anchor3d = (self._anchor3d[0] + point3d[0], self._anchor3d[1] + point3d[1], self._anchor3d[2] + point3d[2])
 
     def get_pos(self):
         return self._pos3d
